@@ -21,12 +21,34 @@ Public Class Form1
     Public ILNames, ILwhIds As New List(Of String) ' Data from the local system
     Public ILLevels, ILCraftNums As New List(Of String) ' Data from the web
 
+    ' Name of file with item links
+    Public FileName As String = "TF2 HATS.txt"
+
     ' Misc. vars
     Public DoOnlineSearch As Boolean = True
     Private Sub Loader() Handles MyBase.Load
 
         ' -- Load item data --
-        Dim Sr As New StreamReader("C:\Users\Ace\Desktop\TF2 HATS.txt")
+        Dim LPath1 As String = Process.GetCurrentProcess.MainModule.FileName
+        LPath1 = LPath1.Remove(LPath1.LastIndexOf("\") + 1) + FileName
+
+        Dim LPath2 As String = Environment.GetEnvironmentVariable(Environment.SpecialFolder.Desktop) + FileName
+
+        ' Check to make sure URL list exists
+        Dim ListPath As String = ""
+        If File.Exists(LPath2) Then
+            ListPath = LPath2
+        ElseIf File.Exists(LPath1) Then
+            ListPath = LPath1
+        End If
+
+        ' If URL list can't be found, report error
+        If ListPath.Length < 2 Then
+            MsgBox("No TF2WH URL list found. File should be called " + FileName + " and be either on the desktop or this program's launch directory.")
+            Me.Close()
+        End If
+
+        Dim Sr As New StreamReader(ListPath)
         While Sr.Peek <> -1
 
             ' Get line
