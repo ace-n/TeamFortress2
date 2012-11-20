@@ -32,7 +32,8 @@ Public Class Form1
         Dim LPath1 As String = Process.GetCurrentProcess.MainModule.FileName
         LPath1 = LPath1.Remove(LPath1.LastIndexOf("\") + 1) + FileName
 
-        Dim LPath2 As String = Environment.GetEnvironmentVariable(Environment.SpecialFolder.Desktop) + FileName
+        ' Kudos to http://www.dreamincode.net/forums/topic/69080-desktop-directory/
+        Dim LPath2 As String = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\" + FileName
 
         ' Check to make sure URL list exists
         Dim ListPath As String = ""
