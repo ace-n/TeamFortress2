@@ -76,6 +76,8 @@ Partial Class Form1
         Me.txtCrafts.Name = "txtCrafts"
         Me.txtCrafts.Size = New System.Drawing.Size(491, 22)
         Me.txtCrafts.TabIndex = 6
+        Me.txtCrafts.Text = "<100,666,777,999,1000,1337,2000,3000,4000,5000,6000,6666,6969,7000,7777,8000,9000" & _
+            ",9999,10000,31337"
         '
         'Label1
         '

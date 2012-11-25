@@ -276,7 +276,7 @@ Public Class Form1
                 Dim LstLevels As New List(Of Integer)
                 For Each M As Match In RgxLevels
 
-                    Dim Val As String = M.Value.Remove(0, 8) & ";"
+                    Dim Val As String = M.Value.Remove(0, 8)
                     If Not LstLevels.Contains(Val) Then
                         LstLevels.Add(Val)
                     End If
@@ -317,22 +317,13 @@ Public Class Form1
 
             ' Levels
             For Each DesdLvl In DesiredLevels
-                If ILLevels.Item(i).Contains(";" & DesdLvl.ToString & ";") Then
 
-                    ' Add level to output
-                    If LevelOutputStr.Length = 0 Then
-                        LevelOutputStr &= "level(s) "
-                    Else
-                        LevelOutputStr &= ", "
-                    End If
-                    LevelOutputStr &= DesdLvl
-
+                ' Skip null conditions
+                If DesdLvl.Length < 1 Then
+                    Continue For
                 End If
-            Next
 
-            ' Levels
-            For Each DesdLvl In DesiredLevels
-                For Each AvailableLevel In ILCraftNums.Item(i)
+                For Each AvailableLevel In ILLevels.Item(i)
 
                     If EvalCondition(DesdLvl, AvailableLevel) Then
 
@@ -342,7 +333,7 @@ Public Class Form1
                         Else
                             LevelOutputStr &= ", "
                         End If
-                        LevelOutputStr &= DesdLvl
+                        LevelOutputStr &= AvailableLevel
 
                     End If
 
@@ -352,6 +343,12 @@ Public Class Form1
             ' Crafts
             Dim CraftOutputStr As String = ""
             For Each DesdCraft In DesiredCrafts
+
+                ' Skip null conditions
+                If DesdCraft.Length < 1 Then
+                    Continue For
+                End If
+
                 For Each AvailableCraft In ILCraftNums.Item(i)
 
                     If EvalCondition(DesdCraft, AvailableCraft) Then
@@ -362,7 +359,7 @@ Public Class Form1
                         Else
                             CraftOutputStr &= ", "
                         End If
-                        CraftOutputStr &= DesdCraft
+                        CraftOutputStr &= AvailableCraft
 
                     End If
 
@@ -431,12 +428,12 @@ Public Class Form1
         ElseIf Condition.First = "<"c Then
 
             ' Less than
-            Return CInt(Condition) < Number
+            Return Number < CInt(Condition.Remove(0, 1))
 
         Else
 
             ' More than
-            Return CInt(Condition) > Number
+            Return Number > CInt(Condition.Remove(0, 1))
 
         End If
 
