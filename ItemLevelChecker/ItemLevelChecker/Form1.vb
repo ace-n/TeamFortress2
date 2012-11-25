@@ -179,23 +179,22 @@ Public Class Form1
     ' Searches
     Private Sub Search()
 
-        ' -- Input verification --
-        ' Input verification (#1)
-        If String.IsNullOrWhiteSpace(txtLevels.Text) Then
-            MsgBox("Please enter the levels of the item that you are searching for. When searching for different levels, separate them with a comma.")
-            Exit Sub
-        End If
-
-        ' Input verification (#2)
+        ' -- Input verification - Levels --
         Dim S As String = txtLevels.Text
-        For i = 0 To 9
-            S = S.Replace(CStr(i), "")
-        Next
-        S = S.Replace(",", "").Replace("<", "").Replace(">", "")
+        S = Regex.Replace(S, "(>|<|)\d", "").Replace(",", "")
         If S.Length > 0 Then
             MsgBox("The level list is invalid. When searching for different levels, separate them with a comma.")
             Exit Sub
         End If
+
+        ' -- Input verification - Crafts --
+        S = txtCrafts.Text
+        S = Regex.Replace(S, "(>|<|)\d", "").Replace(",", "")
+        If S.Length > 0 Then
+            MsgBox("The craft number list is invalid. When searching for different craft numbers, separate them with a comma.")
+            Exit Sub
+        End If
+        ' -- End input verification --
 
         pbar.Maximum = ILwhIds.Count - 1
 
