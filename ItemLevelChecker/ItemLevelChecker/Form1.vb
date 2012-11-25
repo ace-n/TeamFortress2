@@ -28,7 +28,7 @@ Public Class Form1
 
     ' Item list (IL prefix = item list)
     Public ILNames, ILwhIds As New List(Of String) ' Data from the local system
-    Public ILLevels, ILCraftNums As New List(Of String) ' Data from the web
+    Public ILLevels, ILCraftNums As New List(Of List(Of Integer)) ' Data from the web
 
     ' Name of file with item links
     Public FileName As String = "TF2 HATS.txt"
@@ -191,7 +191,7 @@ Public Class Form1
         For i = 0 To 9
             S = S.Replace(CStr(i), "")
         Next
-        S = S.Replace(",", "")
+        S = S.Replace(",", "").Replace("<", "").Replace(">", "")
         If S.Length > 0 Then
             MsgBox("The level list is invalid. When searching for different levels, separate them with a comma.")
             Exit Sub
@@ -239,8 +239,8 @@ Public Class Form1
                 If Not InRange Then
 
                     ' Add null values (to preserve list order)
-                    ILLevels.Add("")
-                    ILCraftNums.Add("")
+                    ILLevels.Add(New List(Of Integer))
+                    ILCraftNums.Add(New List(Of Integer))
 
                     Continue For
 
@@ -256,8 +256,8 @@ Public Class Form1
                 If whId.Length < 1 Then
 
                     ' Add null values (to preserve list order)
-                    ILLevels.Add("")
-                    ILCraftNums.Add("")
+                    ILLevels.Add(New List(Of Integer))
+                    ILCraftNums.Add(New List(Of Integer))
 
                     Continue For
 
@@ -274,26 +274,26 @@ Public Class Form1
 
                 ' Get levels
                 Dim RgxLevels As MatchCollection = Regex.Matches(HTML, ", Level \d+")
-                Dim SOut As String = ";"
+                Dim LstLevels As New List(Of Integer)
                 For Each M As Match In RgxLevels
 
                     Dim Val As String = M.Value.Remove(0, 8) & ";"
-                    If Not SOut.Contains(Val) Then
-                        SOut &= Val
+                    If Not LstLevels.Contains(Val) Then
+                        LstLevels.Add(Val)
                     End If
 
                 Next
-                ILLevels.Add(SOut)
+                ILLevels.Add(LstLevels)
 
                 ' Get craft numbers
                 '   NOTE: These are unique to each instance of an item, so checking for repeats is unnecessary
-                SOut = ";"
                 Dim RgxCraftNums As MatchCollection = Regex.Matches(HTML, "#\d+, Level")
+                Dim LstCrafts As New List(Of Integer)
                 For Each M As Match In RgxCraftNums
                     Dim MStr As String = M.Value.Remove(0, 1)
-                    SOut &= MStr.Remove(MStr.Length - 7) & ";"
+                    LstCrafts.Add(CInt(MStr.Remove(MStr.Length - 7)))
                 Next
-                ILCraftNums.Add(SOut)
+                ILCraftNums.Add(LstCrafts)
 
             Next
 
@@ -312,7 +312,7 @@ Public Class Form1
             Dim LevelOutputStr As String = ""
 
             ' Skip nulls
-            If ILLevels.Item(i).Length = 0 AndAlso ILCraftNums.Item(i).Length = 0 Then
+            If ILLevels.Item(i).Count = 0 AndAlso ILCraftNums.Item(i).Count = 0 Then
                 Continue For
             End If
 
@@ -331,20 +331,43 @@ Public Class Form1
                 End If
             Next
 
+            ' Levels
+            For Each DesdLvl In DesiredLevels
+                For Each AvailableLevel In ILCraftNums.Item(i)
+
+                    If EvalCondition(DesdLvl, AvailableLevel) Then
+
+                        ' Current level is valid - add it to output
+                        If LevelOutputStr.Length = 0 Then
+                            LevelOutputStr &= "level(s) "
+                        Else
+                            LevelOutputStr &= ", "
+                        End If
+                        LevelOutputStr &= DesdLvl
+
+                    End If
+
+                Next
+            Next
+
             ' Crafts
             Dim CraftOutputStr As String = ""
             For Each DesdCraft In DesiredCrafts
-                If ILCraftNums.Item(i).Contains(";" & DesdCraft.ToString & ";") Then
+                For Each AvailableCraft In ILCraftNums.Item(i)
 
-                    ' Add craft # to output
-                    If CraftOutputStr.Length = 0 Then
-                        CraftOutputStr &= "craft number(s) "
-                    Else
-                        CraftOutputStr &= ", "
+                    If EvalCondition(DesdCraft, AvailableCraft) Then
+
+                        ' Current craft # is valid - add it to output
+                        If CraftOutputStr.Length = 0 Then
+                            CraftOutputStr &= "craft number(s) "
+                        Else
+                            CraftOutputStr &= ", "
+                        End If
+                        CraftOutputStr &= DesdCraft
+
                     End If
-                    CraftOutputStr &= DesdCraft
 
-                End If
+                Next
             Next
 
             ' Final output
@@ -388,14 +411,37 @@ Public Class Form1
 
         End If
 
-            ' Reset pBar
-            pbar.Value = 0
+        ' Reset pBar
+        pbar.Value = 0
 
-            ' Reset auto-check/search is-busy flags
-            CheckIsAuto = False
-            SearchIsBusy = False
+        ' Reset auto-check/search is-busy flags
+        CheckIsAuto = False
+        SearchIsBusy = False
 
     End Sub
+
+    ' Function that evaluates conditions and determines if they are true/false
+    '   NOTE: This DOES NOT validate incoming conditions!
+    Private Function EvalCondition(ByVal Condition As String, ByVal Number As Integer) As Boolean
+
+        If Char.IsNumber(Condition.First) Then
+
+            ' Equal
+            Return Condition = Number.ToString
+
+        ElseIf Condition.First = "<"c Then
+
+            ' Less than
+            Return CInt(Condition) < Number
+
+        Else
+
+            ' More than
+            Return CInt(Condition) > Number
+
+        End If
+
+    End Function
 
     ' Scans the item's page for level/craft # data (OLD)
     Private Sub Stage4()
