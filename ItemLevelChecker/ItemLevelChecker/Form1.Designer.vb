@@ -36,6 +36,7 @@ Partial Class Form1
         Me.GroupBox1 = New System.Windows.Forms.GroupBox()
         Me.pbar = New System.Windows.Forms.ProgressBar()
         Me.searchWorker = New System.ComponentModel.BackgroundWorker()
+        Me.gbxItemSets = New System.Windows.Forms.GroupBox()
         Me.GroupBox1.SuspendLayout()
         Me.SuspendLayout()
         '
@@ -156,11 +157,21 @@ Partial Class Form1
         Me.pbar.Size = New System.Drawing.Size(487, 23)
         Me.pbar.TabIndex = 13
         '
+        'gbxItemSets
+        '
+        Me.gbxItemSets.Location = New System.Drawing.Point(518, 12)
+        Me.gbxItemSets.Name = "gbxItemSets"
+        Me.gbxItemSets.Size = New System.Drawing.Size(232, 303)
+        Me.gbxItemSets.TabIndex = 14
+        Me.gbxItemSets.TabStop = False
+        Me.gbxItemSets.Text = "Item Sets"
+        '
         'Form1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(533, 327)
+        Me.ClientSize = New System.Drawing.Size(772, 331)
+        Me.Controls.Add(Me.gbxItemSets)
         Me.Controls.Add(Me.pbar)
         Me.Controls.Add(Me.GroupBox1)
         Me.Controls.Add(Me.btnRequery)
@@ -192,5 +203,6 @@ Partial Class Form1
     Friend WithEvents GroupBox1 As System.Windows.Forms.GroupBox
     Friend WithEvents pbar As System.Windows.Forms.ProgressBar
     Friend WithEvents searchWorker As System.ComponentModel.BackgroundWorker
+    Friend WithEvents gbxItemSets As System.Windows.Forms.GroupBox
 
 End Class

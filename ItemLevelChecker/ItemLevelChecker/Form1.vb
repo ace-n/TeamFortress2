@@ -11,11 +11,20 @@ Public Class Form1
     Public AutoCheckInterval As Integer = 0
     Public CheckIsAuto As Boolean = False
 
+    ' Indicates if selected ranges have changed
+    Public SelectedRangesChanged As Boolean = False
+
     ' Prevents concurrent search requests
     Public SearchIsBusy As Boolean = False
 
     ' IE Browser instance
     Public WithEvents IEObj As New InternetExplorer
+
+    ' List of index ranges corresponding to each item set
+    Public SetRanges As New List(Of Point)
+
+    ' List of checkboxes corresponding to each item set
+    Public SetCbxes As New List(Of CheckBox)
 
     ' Item list (IL prefix = item list)
     Public ILNames, ILwhIds As New List(Of String) ' Data from the local system
@@ -49,11 +58,29 @@ Public Class Form1
             Me.Close()
         End If
 
+        ' Create starting checkbox
+        Dim newCbx As New CheckBox
+        newCbx.Width = gbxItemSets.Width - 20
+        newCbx.Location = New Point(10, 25)
+        newCbx.Visible = True
+
+        ' Add starting checkbox to checkbox lists
+        SetCbxes.Add(newCbx)
+        gbxItemSets.Controls.Add(newCbx)
+
+        ' Selection range start/end values
+        Dim RngStart As Integer = 0
+        Dim RngEnd As Integer = 0
+
+        ' Line counter
+        Dim Cnt As Integer = 0
+
         Dim Sr As New StreamReader(ListPath)
         While Sr.Peek <> -1
 
             ' Get line
             Dim SLine As String = Sr.ReadLine.Trim
+            Cnt += 1
 
             ' Remove any comments
             Dim Idx As Integer = SLine.IndexOf("//")
@@ -62,6 +89,47 @@ Public Class Form1
                 Comment = SLine.Remove(0, Idx + 2).Trim
                 SLine = SLine.Remove(Idx).Trim
             ElseIf Idx = 0 Then ' Entire line is a comment
+
+                Dim cbxObj As CheckBox = SetCbxes.Last
+
+                ' If a checkbox has just been added to the list, assign a name to it
+                If cbxObj.Text.Length = 0 Then
+                    cbxObj.Text = SLine.Remove(0, 3)
+                End If
+
+                ' Add null value to lists
+                ILNames.Add("")
+                ILwhIds.Add("")
+
+                Continue While
+            End If
+
+            If SLine.Length < 1 OrElse String.IsNullOrWhiteSpace(SLine) Then
+
+                ' This line (probably) indicates the start of a new section
+                If Chr(Sr.Peek) = "/" Then ' Nexr line is most likely a comment (either that or incorrectly formatted)
+
+                    ' Add item index range to range list
+                    RngEnd = Cnt
+                    SetRanges.Add(New Point(RngStart, RngEnd))
+                    RngStart = Cnt + 1
+
+                    ' Add checkbox control to panel
+                    newCbx = New CheckBox
+                    newCbx.Visible = True
+                    newCbx.Width = gbxItemSets.Width - 20
+                    newCbx.Location = New Point(10, (SetCbxes.Count + 1) * 25)
+                    ' AddHandler newCbx, selectedRangesChgd() ' BROKEN
+
+                    SetCbxes.Add(newCbx)
+                    gbxItemSets.Controls.Add(newCbx)
+
+                End If
+
+                ' Add null value to lists
+                ILNames.Add("")
+                ILwhIds.Add("")
+
                 Continue While
             End If
 
@@ -70,6 +138,9 @@ Public Class Form1
             ILwhIds.Add(SLine)
 
         End While
+
+        ' Add last set range to list
+        SetRanges.Add(New Point(RngStart, ILwhIds.Count - 1))
 
         ' Run auto-checking reminder worker
         autoCheckWorker.RunWorkerAsync()
@@ -129,17 +200,68 @@ Public Class Form1
         pbar.Maximum = ILwhIds.Count - 1
 
         ' -- Query TF2WH (if required) --
+        Dim ItemsQueried As Integer = 0 ' Moved outside the DoOnlineSearch if for DBG purposes
         If DoOnlineSearch Then
+
+            SelectedRangesChanged = False
 
             ' Clear cached data
             ILLevels.Clear()
             ILCraftNums.Clear()
+
+            ' Update progress bar's max value
+            Dim TotalItemsChecked As Integer = 0
+            For j = 0 To SetRanges.Count - 1
+                If SetCbxes.Item(j).Checked Then
+                    TotalItemsChecked += SetRanges.Item(j).Y - SetRanges.Item(j).X
+                End If
+            Next
+            If TotalItemsChecked = 0 Then
+                pbar.Maximum = ILwhIds.Count ' Use if no set ranges exist
+            Else
+                pbar.Maximum = TotalItemsChecked
+            End If
 
             ' Start querying
             For i = 0 To ILwhIds.Count - 1
 
                 ' Get WH ID
                 Dim whId As String = ILwhIds.Item(i)
+
+                ' Skip out of range IDs
+                Dim InRange As Boolean = SetRanges.Count = 0 ' If no set ranges have been declared, the value is ALWAYS IN RANGE
+                For j = 0 To SetRanges.Count - 1
+                    If SetRanges.Item(j).X <= i AndAlso SetRanges.Item(j).Y >= i AndAlso SetCbxes.Item(j).Checked Then
+                        InRange = True
+                        Exit For
+                    End If
+                Next
+                If Not InRange Then
+
+                    ' Add null values (to preserve list order)
+                    ILLevels.Add("")
+                    ILCraftNums.Add("")
+
+                    Continue For
+
+                End If
+
+                ' Progress bar (if statement is a mandatory exception handler)
+                If pbar.Maximum >= ItemsQueried Then
+                    pbar.Value = ItemsQueried
+                End If
+
+                ' Skip null IDs
+                ItemsQueried += 1 ' This is here because the item ranges include both null and valid values
+                If whId.Length < 1 Then
+
+                    ' Add null values (to preserve list order)
+                    ILLevels.Add("")
+                    ILCraftNums.Add("")
+
+                    Continue For
+
+                End If
 
                 ' Navigate
                 IEObj.Navigate("http://www.tf2wh.com/item.php?id=" & whId & "&specific=1")
@@ -164,7 +286,7 @@ Public Class Form1
                 ILLevels.Add(SOut)
 
                 ' Get craft numbers
-                '   NOTE: These are unique, so checking for repeats is unnecessary
+                '   NOTE: These are unique to each instance of an item, so checking for repeats is unnecessary
                 SOut = ";"
                 Dim RgxCraftNums As MatchCollection = Regex.Matches(HTML, "#\d+, Level")
                 For Each M As Match In RgxCraftNums
@@ -172,9 +294,6 @@ Public Class Form1
                     SOut &= MStr.Remove(MStr.Length - 7) & ";"
                 Next
                 ILCraftNums.Add(SOut)
-
-                ' TEST
-                pbar.Value = i
 
             Next
 
@@ -191,6 +310,11 @@ Public Class Form1
         For i = 0 To ILLevels.Count - 1
 
             Dim LevelOutputStr As String = ""
+
+            ' Skip nulls
+            If ILLevels.Item(i).Length = 0 AndAlso ILCraftNums.Item(i).Length = 0 Then
+                Continue For
+            End If
 
             ' Levels
             For Each DesdLvl In DesiredLevels
@@ -256,15 +380,20 @@ Public Class Form1
 
             End If
         ElseIf Not CheckIsAuto Then
-            MsgBox("No matching items were found.", MsgBoxStyle.SystemModal)
+            If DoOnlineSearch OrElse Not SelectedRangesChanged Then
+                MsgBox("No matching items were found.", MsgBoxStyle.SystemModal)
+            Else
+                MsgBox("No matching items were found. Since your selected item ranges have changed, you may want to re-query TF2WH.", MsgBoxStyle.SystemModal)
+            End If
+
         End If
 
-        ' Reset pBar
-        pbar.Value = 0
+            ' Reset pBar
+            pbar.Value = 0
 
-        ' Reset auto-check/search is-busy flags
-        CheckIsAuto = False
-        SearchIsBusy = False
+            ' Reset auto-check/search is-busy flags
+            CheckIsAuto = False
+            SearchIsBusy = False
 
     End Sub
 
@@ -315,6 +444,10 @@ Public Class Form1
 
     Private Sub hideIeChgd() Handles cbxHideIE.CheckedChanged
         IEObj.Visible = Not cbxHideIE.Checked
+    End Sub
+
+    Private Sub selectedRangesChgd()
+        SelectedRangesChanged = True
     End Sub
 
     ' Automatic checking system
