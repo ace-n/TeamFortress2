@@ -540,4 +540,30 @@ Public Class Form1
         Search()
     End Sub
 
+    Private Sub txtCrafts_TextChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles txtCrafts.TextChanged
+
+        ' Combine lines
+        Dim Lines As String() = txtCrafts.Lines
+        If Lines.Count > 1 Then
+            Dim TotalString As String = ""
+            If txtCrafts.Text.Contains(",") Then
+                For Each S As String In Lines
+                    TotalString &= S
+                Next
+            Else
+                For Each S As String In Lines
+                    TotalString &= S & ","
+                Next
+                TotalString = TotalString.Remove(TotalString.Length - 2) ' Remove last comma
+            End If
+
+            ' Update text
+            txtCrafts.Text = TotalString
+
+        End If
+
+
+    End Sub
+
+
 End Class

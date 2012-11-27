@@ -73,6 +73,8 @@ Partial Class Form1
         '
         Me.txtCrafts.Location = New System.Drawing.Point(20, 95)
         Me.txtCrafts.Margin = New System.Windows.Forms.Padding(4)
+        Me.txtCrafts.MaximumSize = New System.Drawing.Size(491, 22)
+        Me.txtCrafts.Multiline = True
         Me.txtCrafts.Name = "txtCrafts"
         Me.txtCrafts.Size = New System.Drawing.Size(491, 22)
         Me.txtCrafts.TabIndex = 6
