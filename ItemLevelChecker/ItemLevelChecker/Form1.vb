@@ -6,10 +6,22 @@ Public Class Form1
 
     Declare Function Sleep Lib "kernel32" (ByVal dwMilliseconds As Integer) As Integer
 
+    ' Search structure
+    Public Structure WHSearchStruct
+
+        Public Levels As String()
+        Public Crafts As String()
+        Public Keyword As String
+
+    End Structure
+
+    ' List of active search structures
+
     ' Auto-check values
     Public LastAutoCheckTime As Integer = My.Computer.Clock.TickCount
     Public AutoCheckInterval As Integer = 0
     Public CheckIsAuto As Boolean = False
+    Public LastSearchTimestamp As Date ' Used so the user knows at what time the item was found (if they were away and something was found, thus stopping the program w/a dialog box)
 
     ' Indicates if selected ranges have changed
     Public SelectedRangesChanged As Boolean = False
@@ -79,7 +91,8 @@ Public Class Form1
         While Sr.Peek <> -1
 
             ' Get line
-            Dim SLine As String = Sr.ReadLine.Trim
+            Dim SLine2 As String = Sr.ReadLine ' DBG
+            Dim SLine As String = SLine2.Trim
             Cnt += 1
 
             ' Remove any comments
@@ -119,7 +132,7 @@ Public Class Form1
                     newCbx.Visible = True
                     newCbx.Width = gbxItemSets.Width - 20
                     newCbx.Location = New Point(10, (SetCbxes.Count + 1) * 25)
-                    ' AddHandler newCbx, selectedRangesChgd() ' BROKEN
+                    AddHandler newCbx.CheckedChanged, AddressOf selectedRangesChgd
 
                     SetCbxes.Add(newCbx)
                     gbxItemSets.Controls.Add(newCbx)
@@ -298,12 +311,16 @@ Public Class Form1
 
         End If
 
+        ' Search the cache
+        SearchCache(txtLevels.Text.Replace(";", " ").Replace(",", " ").Split(" "), _
+                    txtCrafts.Text.Replace(";", " ").Replace(",", " ").Split(" "))
+
+    End Sub
+
+    Public Sub SearchCache(ByVal DesiredLevels As String(), ByVal DesiredCrafts As String(), Optional ByVal Keyword As String = "")
+
         ' -- Find matching items --
         Dim OutputList As New List(Of String)
-
-        ' Parse input
-        Dim DesiredLevels As String() = txtLevels.Text.Replace(";", " ").Replace(",", " ").Split(" ")
-        Dim DesiredCrafts As String() = txtCrafts.Text.Replace(";", " ").Replace(",", " ").Split(" ")
 
         ' Check for level/craft matches
         For i = 0 To ILLevels.Count - 1
@@ -312,6 +329,12 @@ Public Class Form1
 
             ' Skip nulls
             If ILLevels.Item(i).Count = 0 AndAlso ILCraftNums.Item(i).Count = 0 Then
+                Continue For
+            End If
+
+            ' If keyword is valid, check that current hat's comment contains the keyword
+            If Keyword.Length <> 0 AndAlso _
+                ILNames.Item(i).IndexOf(Keyword, StringComparison.InvariantCultureIgnoreCase) = -1 Then
                 Continue For
             End If
 
@@ -387,9 +410,12 @@ Public Class Form1
         ' Mark search as complete
         DoOnlineSearch = False
 
+        ' Update last (automatic) search timestamp
+        LastSearchTimestamp = My.Computer.Clock.LocalTime
+
         ' Show list to user (if not on auto-check mode)
         If OutputList.Count <> 0 Then
-            If MsgBox("Copy match list to clipboard? (" & OutputList.Count & " item(s) found)", MsgBoxStyle.OkCancel + MsgBoxStyle.SystemModal) = MsgBoxResult.Ok Then
+            If MsgBox("Copy match list to clipboard? (" & OutputList.Count & " item(s) found) - Time: " & LastSearchTimestamp.ToShortTimeString, MsgBoxStyle.OkCancel + MsgBoxStyle.SystemModal) = MsgBoxResult.Ok Then
 
                 Dim OutStr As String = ""
                 For Each OS As String In OutputList
@@ -562,6 +588,21 @@ Public Class Form1
 
         End If
 
+
+    End Sub
+
+    ' DBG!
+    Private Sub Button1_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Button1.Click
+        Dialog1.Show()
+    End Sub
+
+    Private Sub btnNewSearch_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btnNewSearch.Click
+
+        ' Create search
+        Dim NewSearchStruct As New WHSearchStruct
+
+        ' Show new search creation dialog
+        Dim DlgResult As DialogResult = Dialog1.ShowDialog()
 
     End Sub
 

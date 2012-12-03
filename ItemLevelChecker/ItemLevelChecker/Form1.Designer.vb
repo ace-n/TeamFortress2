@@ -37,7 +37,12 @@ Partial Class Form1
         Me.pbar = New System.Windows.Forms.ProgressBar()
         Me.searchWorker = New System.ComponentModel.BackgroundWorker()
         Me.gbxItemSets = New System.Windows.Forms.GroupBox()
+        Me.Label4 = New System.Windows.Forms.Label()
+        Me.ListView1 = New System.Windows.Forms.ListView()
+        Me.Button1 = New System.Windows.Forms.Button()
+        Me.btnNewSearch = New System.Windows.Forms.Button()
         Me.GroupBox1.SuspendLayout()
+        Me.gbxItemSets.SuspendLayout()
         Me.SuspendLayout()
         '
         'Label2
@@ -163,6 +168,7 @@ Partial Class Form1
         '
         'gbxItemSets
         '
+        Me.gbxItemSets.Controls.Add(Me.Button1)
         Me.gbxItemSets.Location = New System.Drawing.Point(518, 12)
         Me.gbxItemSets.Name = "gbxItemSets"
         Me.gbxItemSets.Size = New System.Drawing.Size(232, 303)
@@ -170,11 +176,49 @@ Partial Class Form1
         Me.gbxItemSets.TabStop = False
         Me.gbxItemSets.Text = "Item Sets"
         '
+        'Label4
+        '
+        Me.Label4.AutoSize = True
+        Me.Label4.Location = New System.Drawing.Point(22, 332)
+        Me.Label4.Name = "Label4"
+        Me.Label4.Size = New System.Drawing.Size(114, 17)
+        Me.Label4.TabIndex = 15
+        Me.Label4.Text = "Stored Searches"
+        '
+        'ListView1
+        '
+        Me.ListView1.Location = New System.Drawing.Point(23, 352)
+        Me.ListView1.Name = "ListView1"
+        Me.ListView1.Size = New System.Drawing.Size(737, 177)
+        Me.ListView1.TabIndex = 16
+        Me.ListView1.UseCompatibleStateImageBehavior = False
+        '
+        'Button1
+        '
+        Me.Button1.Location = New System.Drawing.Point(23, 246)
+        Me.Button1.Name = "Button1"
+        Me.Button1.Size = New System.Drawing.Size(75, 23)
+        Me.Button1.TabIndex = 0
+        Me.Button1.Text = "Button1"
+        Me.Button1.UseVisualStyleBackColor = True
+        '
+        'btnNewSearch
+        '
+        Me.btnNewSearch.Location = New System.Drawing.Point(323, 550)
+        Me.btnNewSearch.Name = "btnNewSearch"
+        Me.btnNewSearch.Size = New System.Drawing.Size(127, 23)
+        Me.btnNewSearch.TabIndex = 17
+        Me.btnNewSearch.Text = "Add New Search"
+        Me.btnNewSearch.UseVisualStyleBackColor = True
+        '
         'Form1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(772, 331)
+        Me.ClientSize = New System.Drawing.Size(772, 585)
+        Me.Controls.Add(Me.btnNewSearch)
+        Me.Controls.Add(Me.ListView1)
+        Me.Controls.Add(Me.Label4)
         Me.Controls.Add(Me.gbxItemSets)
         Me.Controls.Add(Me.pbar)
         Me.Controls.Add(Me.GroupBox1)
@@ -189,6 +233,7 @@ Partial Class Form1
         Me.Text = "TF2 Scanner - Ace N"
         Me.GroupBox1.ResumeLayout(False)
         Me.GroupBox1.PerformLayout()
+        Me.gbxItemSets.ResumeLayout(False)
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
@@ -208,5 +253,9 @@ Partial Class Form1
     Friend WithEvents pbar As System.Windows.Forms.ProgressBar
     Friend WithEvents searchWorker As System.ComponentModel.BackgroundWorker
     Friend WithEvents gbxItemSets As System.Windows.Forms.GroupBox
+    Friend WithEvents Label4 As System.Windows.Forms.Label
+    Friend WithEvents ListView1 As System.Windows.Forms.ListView
+    Friend WithEvents Button1 As System.Windows.Forms.Button
+    Friend WithEvents btnNewSearch As System.Windows.Forms.Button
 
 End Class
