@@ -15,17 +15,21 @@ Public Class Dialog1
 
         ' Levels
         Dim LString As String = ""
-        For Each L As String In ActiveSearchStruct.Levels
-            LString &= L & ","
-        Next
-        LString = LString.Remove(LString.Length - 1)
+        If ActiveSearchStruct.Levels IsNot Nothing Then ' Null check
+            For Each L As String In ActiveSearchStruct.Levels
+                LString &= L & ","
+            Next
+            LString = LString.Remove(LString.Length - 1)
+        End If
 
         ' Craft #s
         Dim CString As String = ""
-        For Each C As String In ActiveSearchStruct.Crafts
-            CString &= C & ","
-        Next
-        CString = CString.Remove(CString.Length - 1)
+        If ActiveSearchStruct.Crafts IsNot Nothing Then ' Null check
+            For Each C As String In ActiveSearchStruct.Crafts
+                CString &= C & ","
+            Next
+            CString = CString.Remove(CString.Length - 1)
+        End If
 
         ' Update textboxes
         txtLevels.Text = LString
@@ -62,7 +66,7 @@ Public Class Dialog1
     Private Function validateLevelsOrCrafts(ByVal Text As String) As Boolean
 
         Dim SSplit = Text.Split(",")
-        For Each Str As String In Text
+        For Each Str As String In SSplit
 
             If Regex.Match(Str, "(<|>|)\d+").Length <> Str.Length Then
                 Return False ' Error spotted!

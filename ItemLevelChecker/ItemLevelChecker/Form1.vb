@@ -16,6 +16,7 @@ Public Class Form1
     End Structure
 
     ' List of active search structures
+    Public ActiveSearchStructsList As New List(Of WHSearchStruct)
 
     ' Auto-check values
     Public LastAutoCheckTime As Integer = My.Computer.Clock.TickCount
@@ -591,20 +592,45 @@ Public Class Form1
 
     End Sub
 
-    ' DBG!
-    Private Sub Button1_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Button1.Click
-        Dialog1.Show()
-    End Sub
-
-    Private Sub btnNewSearch_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btnNewSearch.Click
-
-        ' Create search
-        Dim NewSearchStruct As New WHSearchStruct
+    Private Sub btnNewSearch_Click() Handles btnNewSearch.Click
 
         ' Show new search creation dialog
-        Dim DlgResult As DialogResult = Dialog1.ShowDialog()
+        Dialog1.ActiveSearchStruct = New WHSearchStruct ' Create new search
+        Dim DlgResult As DialogResult = Dialog1.ShowDialog() ' Show dialog
+
+        ' Add search to list of active searches, if appropriate
+        If DlgResult = DialogResult.OK Then
+            ActiveSearchStructsList.Add(Dialog1.ActiveSearchStruct)
+        End If
+
+        ' Update the list of items
+        updateListOfActiveSearches()
 
     End Sub
 
+    ' Update list
+    Private Sub updateListOfActiveSearches()
+
+        ' Add new rows, if necessary
+        If ActiveSearchStructsList.Count > dgvActiveTrades.RowCount Then
+            dgvActiveTrades.Rows.Add(ActiveSearchStructsList.Count - dgvActiveTrades.RowCount)
+        End If
+
+        ' Populate existing rows
+        For i = 0 To ActiveSearchStructsList.Count - 1
+
+            ' Get active row
+            Dim ActiveRow As DataGridViewRow = dgvActiveTrades.Rows.Item(0)
+
+            ' Get active WHSearchStruct
+            Dim ActiveWHSS As WHSearchStruct = ActiveSearchStructsList.Item(i)
+
+            ' Add stuff to the active row
+            ActiveRow.Cells(0).Value = ActiveWHSS.Keyword
+            ActiveRow.Cells(1).Value = String.Join(",", ActiveWHSS.Levels)
+
+        Next
+
+    End Sub
 
 End Class

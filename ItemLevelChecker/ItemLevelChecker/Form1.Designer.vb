@@ -37,12 +37,17 @@ Partial Class Form1
         Me.pbar = New System.Windows.Forms.ProgressBar()
         Me.searchWorker = New System.ComponentModel.BackgroundWorker()
         Me.gbxItemSets = New System.Windows.Forms.GroupBox()
-        Me.Label4 = New System.Windows.Forms.Label()
-        Me.ListView1 = New System.Windows.Forms.ListView()
         Me.Button1 = New System.Windows.Forms.Button()
+        Me.Label4 = New System.Windows.Forms.Label()
         Me.btnNewSearch = New System.Windows.Forms.Button()
+        Me.dgvActiveTrades = New System.Windows.Forms.DataGridView()
+        Me.cl_Keyword = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        Me.cl_Levels = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        Me.cl_crafts = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        Me.cl_tf2outpostTradeID = New System.Windows.Forms.DataGridViewTextBoxColumn()
         Me.GroupBox1.SuspendLayout()
         Me.gbxItemSets.SuspendLayout()
+        CType(Me.dgvActiveTrades, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'Label2
@@ -176,23 +181,6 @@ Partial Class Form1
         Me.gbxItemSets.TabStop = False
         Me.gbxItemSets.Text = "Item Sets"
         '
-        'Label4
-        '
-        Me.Label4.AutoSize = True
-        Me.Label4.Location = New System.Drawing.Point(22, 332)
-        Me.Label4.Name = "Label4"
-        Me.Label4.Size = New System.Drawing.Size(114, 17)
-        Me.Label4.TabIndex = 15
-        Me.Label4.Text = "Stored Searches"
-        '
-        'ListView1
-        '
-        Me.ListView1.Location = New System.Drawing.Point(23, 352)
-        Me.ListView1.Name = "ListView1"
-        Me.ListView1.Size = New System.Drawing.Size(737, 177)
-        Me.ListView1.TabIndex = 16
-        Me.ListView1.UseCompatibleStateImageBehavior = False
-        '
         'Button1
         '
         Me.Button1.Location = New System.Drawing.Point(23, 246)
@@ -201,6 +189,15 @@ Partial Class Form1
         Me.Button1.TabIndex = 0
         Me.Button1.Text = "Button1"
         Me.Button1.UseVisualStyleBackColor = True
+        '
+        'Label4
+        '
+        Me.Label4.AutoSize = True
+        Me.Label4.Location = New System.Drawing.Point(22, 332)
+        Me.Label4.Name = "Label4"
+        Me.Label4.Size = New System.Drawing.Size(114, 17)
+        Me.Label4.TabIndex = 15
+        Me.Label4.Text = "Stored Searches"
         '
         'btnNewSearch
         '
@@ -211,13 +208,45 @@ Partial Class Form1
         Me.btnNewSearch.Text = "Add New Search"
         Me.btnNewSearch.UseVisualStyleBackColor = True
         '
+        'dgvActiveTrades
+        '
+        Me.dgvActiveTrades.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        Me.dgvActiveTrades.Columns.AddRange(New System.Windows.Forms.DataGridViewColumn() {Me.cl_Keyword, Me.cl_Levels, Me.cl_crafts, Me.cl_tf2outpostTradeID})
+        Me.dgvActiveTrades.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter
+        Me.dgvActiveTrades.Location = New System.Drawing.Point(25, 353)
+        Me.dgvActiveTrades.Name = "dgvActiveTrades"
+        Me.dgvActiveTrades.RowTemplate.Height = 24
+        Me.dgvActiveTrades.Size = New System.Drawing.Size(725, 150)
+        Me.dgvActiveTrades.TabIndex = 18
+        '
+        'cl_Keyword
+        '
+        Me.cl_Keyword.HeaderText = "Keyword"
+        Me.cl_Keyword.Name = "cl_Keyword"
+        Me.cl_Keyword.Width = 200
+        '
+        'cl_Levels
+        '
+        Me.cl_Levels.HeaderText = "Levels"
+        Me.cl_Levels.Name = "cl_Levels"
+        '
+        'cl_crafts
+        '
+        Me.cl_crafts.HeaderText = "Craft #s"
+        Me.cl_crafts.Name = "cl_crafts"
+        '
+        'cl_tf2outpostTradeID
+        '
+        Me.cl_tf2outpostTradeID.HeaderText = "Outpost Trade #"
+        Me.cl_tf2outpostTradeID.Name = "cl_tf2outpostTradeID"
+        '
         'Form1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(772, 585)
+        Me.Controls.Add(Me.dgvActiveTrades)
         Me.Controls.Add(Me.btnNewSearch)
-        Me.Controls.Add(Me.ListView1)
         Me.Controls.Add(Me.Label4)
         Me.Controls.Add(Me.gbxItemSets)
         Me.Controls.Add(Me.pbar)
@@ -234,6 +263,7 @@ Partial Class Form1
         Me.GroupBox1.ResumeLayout(False)
         Me.GroupBox1.PerformLayout()
         Me.gbxItemSets.ResumeLayout(False)
+        CType(Me.dgvActiveTrades, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
@@ -254,8 +284,12 @@ Partial Class Form1
     Friend WithEvents searchWorker As System.ComponentModel.BackgroundWorker
     Friend WithEvents gbxItemSets As System.Windows.Forms.GroupBox
     Friend WithEvents Label4 As System.Windows.Forms.Label
-    Friend WithEvents ListView1 As System.Windows.Forms.ListView
     Friend WithEvents Button1 As System.Windows.Forms.Button
     Friend WithEvents btnNewSearch As System.Windows.Forms.Button
+    Friend WithEvents dgvActiveTrades As System.Windows.Forms.DataGridView
+    Friend WithEvents cl_Keyword As System.Windows.Forms.DataGridViewTextBoxColumn
+    Friend WithEvents cl_Levels As System.Windows.Forms.DataGridViewTextBoxColumn
+    Friend WithEvents cl_crafts As System.Windows.Forms.DataGridViewTextBoxColumn
+    Friend WithEvents cl_tf2outpostTradeID As System.Windows.Forms.DataGridViewTextBoxColumn
 
 End Class
