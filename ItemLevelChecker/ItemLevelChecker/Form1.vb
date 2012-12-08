@@ -321,11 +321,22 @@ Public Class Form1
         ' Perform searches
         For i As Integer = 0 To ActiveSearchStructsList.Count - 1
             Dim SearchObj As WHSearchClass = ActiveSearchStructsList.Item(i)
-            SearchCache(SearchObj.Levels, SearchObj.Crafts, SearchObj.Keyword)
+            ResultsList.AddRange(SearchCache(SearchObj.Levels, SearchObj.Crafts, SearchObj.Keyword))
         Next
 
         ' Report results
+        If ResultsList.Count > 0 AndAlso
+            MsgBox("Copy matching item list to clipboard? (" & ResultsList.Count & " item(s) found)", MsgBoxStyle.OkCancel) = MsgBoxResult.Ok Then
 
+            ' Output result to clipboard
+            My.Computer.Clipboard.SetText(String.Join(vbLf, ResultsList))
+
+        ElseIf Not CheckIsAuto Then
+
+            ' Notify user that nothing was found if the search was user-initiated
+            MsgBox("No matching items were found.")
+
+        End If
 
     End Sub
 
@@ -426,29 +437,12 @@ Public Class Form1
         ' Update last (automatic) search timestamp
         LastSearchTimestamp = My.Computer.Clock.LocalTime
 
-        ' Show list to user (if not on auto-check mode)
-        If OutputList.Count <> 0 Then
-            If MsgBox("Copy match list to clipboard? (" & OutputList.Count & " item(s) found) - Time: " & LastSearchTimestamp.ToShortTimeString, MsgBoxStyle.OkCancel + MsgBoxStyle.SystemModal) = MsgBoxResult.Ok Then
-
-                Dim OutStr As String = ""
-                For Each OS As String In OutputList
-                    OutStr &= OS & vbCrLf
-                Next
-                My.Computer.Clipboard.SetText(OutStr)
-
-            End If
-        ElseIf Not CheckIsAuto Then
-            If DoOnlineSearch OrElse Not SelectedRangesChanged Then
-                MsgBox("No matching items were found.", MsgBoxStyle.SystemModal)
-            Else
-                MsgBox("No matching items were found. Since your selected item ranges have changed, you may want to re-query TF2WH.", MsgBoxStyle.SystemModal)
-            End If
-
-        End If
-
         ' Reset auto-check/search is-busy flags
         CheckIsAuto = False
         SearchIsBusy = False
+
+        ' Return results of search
+        Return OutputList
 
     End Function
 
@@ -612,13 +606,15 @@ Public Class Form1
             ActiveRow.Cells(0).Value = ActiveWHSS.Keyword
             ActiveRow.Cells(1).Value = String.Join(",", ActiveWHSS.Levels)
             ActiveRow.Cells(2).Value = String.Join(",", ActiveWHSS.Crafts)
+            ActiveRow.Cells(3).Value = ActiveWHSS.OutpostID
+            ActiveRow.Cells(4).Value = ActiveWHSS.Referrer
 
         Next
 
     End Sub
 
     ' Update list of active searches (with changes from the data grid view)
-    Private Sub updateListOfActiveSearches() Handles dgvActiveTrades.RowLeave, dgvActiveTrades.RowsRemoved
+    Private Sub updateListOfActiveSearches() Handles dgvActiveTrades.RowLeave, dgvActiveTrades.RowsRemoved, dgvActiveTrades.LostFocus, dgvActiveTrades.MouseLeave
 
         ' Clear ActiveSearchStructsList
         ActiveSearchStructsList.Clear()
@@ -648,6 +644,8 @@ Public Class Form1
             ActiveSearchObj.Keyword = ActiveRow.Cells(0).EditedFormattedValue
             ActiveSearchObj.Levels = ActiveRow.Cells(1).EditedFormattedValue.ToString.Split(",")
             ActiveSearchObj.Crafts = ActiveRow.Cells(2).EditedFormattedValue.ToString.Split(",")
+            ActiveSearchObj.OutpostID = ActiveRow.Cells(3).EditedFormattedValue.ToString
+            ActiveSearchObj.Referrer = ActiveRow.Cells(4).EditedFormattedValue.ToString
 
             ' Add search object to active search list
             ActiveSearchStructsList.Add(ActiveSearchObj)

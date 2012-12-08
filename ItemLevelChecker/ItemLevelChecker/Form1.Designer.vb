@@ -33,22 +33,26 @@ Partial Class Form1
         Me.pbar = New System.Windows.Forms.ProgressBar()
         Me.searchWorker = New System.ComponentModel.BackgroundWorker()
         Me.gbxItemSets = New System.Windows.Forms.GroupBox()
-        Me.Button1 = New System.Windows.Forms.Button()
         Me.Label4 = New System.Windows.Forms.Label()
         Me.dgvActiveTrades = New System.Windows.Forms.DataGridView()
+        Me.GroupBox2 = New System.Windows.Forms.GroupBox()
+        Me.CheckBox1 = New System.Windows.Forms.CheckBox()
+        Me.CheckBox2 = New System.Windows.Forms.CheckBox()
+        Me.CheckBox3 = New System.Windows.Forms.CheckBox()
+        Me.CheckBox4 = New System.Windows.Forms.CheckBox()
         Me.clKeyword = New System.Windows.Forms.DataGridViewTextBoxColumn()
-        Me.clCrafts = New System.Windows.Forms.DataGridViewTextBoxColumn()
         Me.clLevels = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        Me.clCrafts = New System.Windows.Forms.DataGridViewTextBoxColumn()
         Me.clOPTrade = New System.Windows.Forms.DataGridViewTextBoxColumn()
         Me.clReferrer = New System.Windows.Forms.DataGridViewTextBoxColumn()
         Me.GroupBox1.SuspendLayout()
-        Me.gbxItemSets.SuspendLayout()
         CType(Me.dgvActiveTrades, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.GroupBox2.SuspendLayout()
         Me.SuspendLayout()
         '
         'btnClick
         '
-        Me.btnClick.Location = New System.Drawing.Point(642, 497)
+        Me.btnClick.Location = New System.Drawing.Point(831, 496)
         Me.btnClick.Margin = New System.Windows.Forms.Padding(4)
         Me.btnClick.Name = "btnClick"
         Me.btnClick.Size = New System.Drawing.Size(100, 28)
@@ -58,7 +62,7 @@ Partial Class Form1
         '
         'btnRequery
         '
-        Me.btnRequery.Location = New System.Drawing.Point(629, 533)
+        Me.btnRequery.Location = New System.Drawing.Point(818, 532)
         Me.btnRequery.Margin = New System.Windows.Forms.Padding(4)
         Me.btnRequery.Name = "btnRequery"
         Me.btnRequery.Size = New System.Drawing.Size(126, 28)
@@ -114,7 +118,7 @@ Partial Class Form1
         Me.GroupBox1.Controls.Add(Me.Label3)
         Me.GroupBox1.Location = New System.Drawing.Point(12, 445)
         Me.GroupBox1.Name = "GroupBox1"
-        Me.GroupBox1.Size = New System.Drawing.Size(544, 101)
+        Me.GroupBox1.Size = New System.Drawing.Size(746, 101)
         Me.GroupBox1.TabIndex = 12
         Me.GroupBox1.TabStop = False
         Me.GroupBox1.Text = "Options"
@@ -123,27 +127,17 @@ Partial Class Form1
         '
         Me.pbar.Location = New System.Drawing.Point(15, 552)
         Me.pbar.Name = "pbar"
-        Me.pbar.Size = New System.Drawing.Size(544, 23)
+        Me.pbar.Size = New System.Drawing.Size(743, 23)
         Me.pbar.TabIndex = 13
         '
         'gbxItemSets
         '
-        Me.gbxItemSets.Controls.Add(Me.Button1)
-        Me.gbxItemSets.Location = New System.Drawing.Point(562, 12)
+        Me.gbxItemSets.Location = New System.Drawing.Point(764, 12)
         Me.gbxItemSets.Name = "gbxItemSets"
-        Me.gbxItemSets.Size = New System.Drawing.Size(232, 478)
+        Me.gbxItemSets.Size = New System.Drawing.Size(232, 237)
         Me.gbxItemSets.TabIndex = 14
         Me.gbxItemSets.TabStop = False
         Me.gbxItemSets.Text = "Item Sets"
-        '
-        'Button1
-        '
-        Me.Button1.Location = New System.Drawing.Point(55, 283)
-        Me.Button1.Name = "Button1"
-        Me.Button1.Size = New System.Drawing.Size(125, 23)
-        Me.Button1.TabIndex = 0
-        Me.Button1.Text = "DBG UPDATE"
-        Me.Button1.UseVisualStyleBackColor = True
         '
         'Label4
         '
@@ -156,44 +150,105 @@ Partial Class Form1
         '
         'dgvActiveTrades
         '
+        Me.dgvActiveTrades.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText
         Me.dgvActiveTrades.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        Me.dgvActiveTrades.Columns.AddRange(New System.Windows.Forms.DataGridViewColumn() {Me.clKeyword, Me.clCrafts, Me.clLevels, Me.clOPTrade, Me.clReferrer})
+        Me.dgvActiveTrades.Columns.AddRange(New System.Windows.Forms.DataGridViewColumn() {Me.clKeyword, Me.clLevels, Me.clCrafts, Me.clOPTrade, Me.clReferrer})
+        Me.dgvActiveTrades.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter
         Me.dgvActiveTrades.Location = New System.Drawing.Point(15, 33)
         Me.dgvActiveTrades.Name = "dgvActiveTrades"
         Me.dgvActiveTrades.RowTemplate.Height = 24
-        Me.dgvActiveTrades.Size = New System.Drawing.Size(541, 406)
+        Me.dgvActiveTrades.Size = New System.Drawing.Size(743, 406)
         Me.dgvActiveTrades.TabIndex = 16
+        '
+        'GroupBox2
+        '
+        Me.GroupBox2.Controls.Add(Me.CheckBox4)
+        Me.GroupBox2.Controls.Add(Me.CheckBox3)
+        Me.GroupBox2.Controls.Add(Me.CheckBox2)
+        Me.GroupBox2.Controls.Add(Me.CheckBox1)
+        Me.GroupBox2.Location = New System.Drawing.Point(764, 256)
+        Me.GroupBox2.Name = "GroupBox2"
+        Me.GroupBox2.Size = New System.Drawing.Size(235, 233)
+        Me.GroupBox2.TabIndex = 17
+        Me.GroupBox2.TabStop = False
+        Me.GroupBox2.Text = "Options (These are WIP)"
+        '
+        'CheckBox1
+        '
+        Me.CheckBox1.AutoSize = True
+        Me.CheckBox1.Location = New System.Drawing.Point(7, 22)
+        Me.CheckBox1.Name = "CheckBox1"
+        Me.CheckBox1.Size = New System.Drawing.Size(217, 21)
+        Me.CheckBox1.TabIndex = 0
+        Me.CheckBox1.Text = "Highlight successful searches"
+        Me.CheckBox1.UseVisualStyleBackColor = True
+        '
+        'CheckBox2
+        '
+        Me.CheckBox2.AutoSize = True
+        Me.CheckBox2.Location = New System.Drawing.Point(7, 50)
+        Me.CheckBox2.Name = "CheckBox2"
+        Me.CheckBox2.Size = New System.Drawing.Size(160, 21)
+        Me.CheckBox2.TabIndex = 1
+        Me.CheckBox2.Text = "Ignore keyword case"
+        Me.CheckBox2.UseVisualStyleBackColor = True
+        '
+        'CheckBox3
+        '
+        Me.CheckBox3.AutoSize = True
+        Me.CheckBox3.Location = New System.Drawing.Point(7, 78)
+        Me.CheckBox3.Name = "CheckBox3"
+        Me.CheckBox3.Size = New System.Drawing.Size(151, 21)
+        Me.CheckBox3.TabIndex = 2
+        Me.CheckBox3.Text = "Save/Load settings"
+        Me.CheckBox3.UseVisualStyleBackColor = True
+        '
+        'CheckBox4
+        '
+        Me.CheckBox4.AutoSize = True
+        Me.CheckBox4.Location = New System.Drawing.Point(7, 105)
+        Me.CheckBox4.Name = "CheckBox4"
+        Me.CheckBox4.Size = New System.Drawing.Size(191, 21)
+        Me.CheckBox4.TabIndex = 3
+        Me.CheckBox4.Text = "Save/Load past searches"
+        Me.CheckBox4.UseVisualStyleBackColor = True
         '
         'clKeyword
         '
         Me.clKeyword.HeaderText = "Keyword"
         Me.clKeyword.Name = "clKeyword"
-        '
-        'clCrafts
-        '
-        Me.clCrafts.HeaderText = "Craft #s"
-        Me.clCrafts.Name = "clCrafts"
+        Me.clKeyword.Width = 150
         '
         'clLevels
         '
         Me.clLevels.HeaderText = "Levels"
         Me.clLevels.Name = "clLevels"
+        Me.clLevels.Width = 150
+        '
+        'clCrafts
+        '
+        Me.clCrafts.HeaderText = "Craft #s"
+        Me.clCrafts.Name = "clCrafts"
+        Me.clCrafts.Width = 150
         '
         'clOPTrade
         '
         Me.clOPTrade.HeaderText = "Outpost ID"
         Me.clOPTrade.Name = "clOPTrade"
+        Me.clOPTrade.ToolTipText = "Double Click to go to trade"
         '
         'clReferrer
         '
         Me.clReferrer.HeaderText = "Referrer"
         Me.clReferrer.Name = "clReferrer"
+        Me.clReferrer.Width = 150
         '
         'Form1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(805, 585)
+        Me.ClientSize = New System.Drawing.Size(1011, 585)
+        Me.Controls.Add(Me.GroupBox2)
         Me.Controls.Add(Me.dgvActiveTrades)
         Me.Controls.Add(Me.btnRequery)
         Me.Controls.Add(Me.Label4)
@@ -203,11 +258,12 @@ Partial Class Form1
         Me.Controls.Add(Me.btnClick)
         Me.Margin = New System.Windows.Forms.Padding(4)
         Me.Name = "Form1"
-        Me.Text = "TF2 ITS - Scanner WIP"
+        Me.Text = "TF2 ITS - Scanner WIP (Upgrade Stage 2/3)"
         Me.GroupBox1.ResumeLayout(False)
         Me.GroupBox1.PerformLayout()
-        Me.gbxItemSets.ResumeLayout(False)
         CType(Me.dgvActiveTrades, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.GroupBox2.ResumeLayout(False)
+        Me.GroupBox2.PerformLayout()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
@@ -224,11 +280,15 @@ Partial Class Form1
     Friend WithEvents searchWorker As System.ComponentModel.BackgroundWorker
     Friend WithEvents gbxItemSets As System.Windows.Forms.GroupBox
     Friend WithEvents Label4 As System.Windows.Forms.Label
-    Friend WithEvents Button1 As System.Windows.Forms.Button
     Friend WithEvents dgvActiveTrades As System.Windows.Forms.DataGridView
+    Friend WithEvents GroupBox2 As System.Windows.Forms.GroupBox
+    Friend WithEvents CheckBox4 As System.Windows.Forms.CheckBox
+    Friend WithEvents CheckBox3 As System.Windows.Forms.CheckBox
+    Friend WithEvents CheckBox2 As System.Windows.Forms.CheckBox
+    Friend WithEvents CheckBox1 As System.Windows.Forms.CheckBox
     Friend WithEvents clKeyword As System.Windows.Forms.DataGridViewTextBoxColumn
-    Friend WithEvents clCrafts As System.Windows.Forms.DataGridViewTextBoxColumn
     Friend WithEvents clLevels As System.Windows.Forms.DataGridViewTextBoxColumn
+    Friend WithEvents clCrafts As System.Windows.Forms.DataGridViewTextBoxColumn
     Friend WithEvents clOPTrade As System.Windows.Forms.DataGridViewTextBoxColumn
     Friend WithEvents clReferrer As System.Windows.Forms.DataGridViewTextBoxColumn
 
