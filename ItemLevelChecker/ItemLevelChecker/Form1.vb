@@ -54,6 +54,9 @@ Public Class Form1
         ' Update stored trade filepath
         StoredTradeFPath = MePath + "storedtrades.txt"
 
+        ' Load trades
+        LoadTradesOnOpen()
+
         ' -- Load item data --
         Dim LPath1 As String = MePath + FileName
 
@@ -591,15 +594,16 @@ Public Class Form1
     Private Sub updateDataGridView()
 
         ' Add new rows, if necessary
-        If ActiveSearchStructsList.Count > dgvActiveTrades.RowCount Then
-            dgvActiveTrades.Rows.Add(ActiveSearchStructsList.Count - dgvActiveTrades.RowCount)
+        '   NOTE: There should be (number of items + 1) rows since some functions disregard the last row (on purpose - whenever the user edits a data grid, the last row is always empty)
+        If ActiveSearchStructsList.Count + 1 > dgvActiveTrades.RowCount Then
+            dgvActiveTrades.Rows.Add(ActiveSearchStructsList.Count + 1 - dgvActiveTrades.RowCount)
         End If
 
         ' Populate existing rows
         For i = 0 To ActiveSearchStructsList.Count - 1
 
             ' Get active row
-            Dim ActiveRow As DataGridViewRow = dgvActiveTrades.Rows.Item(0)
+            Dim ActiveRow As DataGridViewRow = dgvActiveTrades.Rows.Item(i)
 
             ' Get active WHSearchStruct
             Dim ActiveWHSS As WHSearchClass = ActiveSearchStructsList.Item(i)
@@ -614,7 +618,7 @@ Public Class Form1
     End Sub
 
     ' Update list of active searches (with changes from the data grid view)
-    Private Sub updateListOfActiveSearches() Handles dgvActiveTrades.RowLeave
+    Private Sub updateListOfActiveSearches() Handles dgvActiveTrades.RowLeave, dgvActiveTrades.RowsRemoved
 
         ' Clear ActiveSearchStructsList
         ActiveSearchStructsList.Clear()
@@ -629,7 +633,7 @@ Public Class Form1
             If Not WHSearchClass.validateLevelsOrCrafts(ActiveRow.Cells(1).EditedFormattedValue.ToString) Or Not WHSearchClass.validateLevelsOrCrafts(ActiveRow.Cells(2).EditedFormattedValue.ToString) Then
 
                 ' Error detected
-                MsgBox("Error in levels/crafts specification in row " + (i + 1).ToString + ". That row's data was not updated.")
+                'MsgBox("Error in levels/crafts specification in row " + (i + 1).ToString + ". That row's data was not updated.")
                 dgvActiveTrades.Rows.Item(i).DefaultCellStyle.BackColor = Color.OrangeRed
                 Continue For
 
@@ -687,10 +691,11 @@ Public Class Form1
             Dim ErrorMsg As String = "An invalid trade (" + sLine + ") was found in the stored trades file. Click OK to skip it, or CANCEL to stop loading trades."
 
             ' Some really simple validation - stronger validation is done in the trade object constructor
-            If sLine.Length < 2 OrElse sLine.Contains(";;") Then
-                If MsgBox(ErrorMsg) = MsgBoxResult.Cancel Then
+            If sLine.Length > 8 AndAlso Not sLine.Contains(";") Then ' 4 separators * 2 characters per separator = 8 characters minimum (assuming line has no meaning)
+                If MsgBox(ErrorMsg, MsgBoxStyle.OkCancel) = MsgBoxResult.Cancel Then
 
-                    ' Clear the loaded items and stop loading any more
+                    ' An error was detected
+                    '   Clear the loaded items and stop loading any more
                     ActiveSearchStructsList.Clear()
                     sReader.Close()
                     Exit Sub
@@ -698,7 +703,8 @@ Public Class Form1
                 Else
                     Continue While ' Skip the item
                 End If
-
+            ElseIf sLine.Length < 9 Then ' Skip lines with 8 characters or less (including lines consisting entirely of separators)
+                Continue While
             End If
 
             ' Enter new trade into database
@@ -706,7 +712,7 @@ Public Class Form1
                 ActiveSearchStructsList.Add(New WHSearchClass(sLine))
             Catch e As ArgumentException
 
-                If MsgBox(ErrorMsg) = MsgBoxResult.Cancel Then
+                If MsgBox(ErrorMsg, MsgBoxStyle.OkCancel) = MsgBoxResult.Cancel Then
 
                     ' Clear the loaded items and stop loading any more
                     ActiveSearchStructsList.Clear()
@@ -721,6 +727,9 @@ Public Class Form1
 
         ' Close the StreamReader
         sReader.Close()
+
+        ' Update the dataGridView
+        updateDataGridView()
 
     End Sub
 

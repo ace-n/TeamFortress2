@@ -9,17 +9,17 @@
 
     ' Serialization method
     Public Function Serialize() As String
-        Return String.Join(",", Levels) + ";;" + String.Join(",", Crafts) + ";;" + Keyword + ";;" + OutpostID + ";;" + Referrer
+        Return String.Join(",", Levels) + ";" + String.Join(",", Crafts) + ";" + Keyword + ";" + OutpostID + ";" + Referrer
     End Function
 
     ' Deserialization method (a constructor)
     Public Sub New(ByVal ConstructorString As String)
 
-        Dim SSplit As String() = ConstructorString.Split(";;")
+        Dim SSplit As String() = ConstructorString.Split(";")
 
         ' Validation
-        If SSplit.Count <> 5 OrElse Not validateLevelsOrCrafts(SSplit.GetValue(0).ToString) OrElse Not Not validateLevelsOrCrafts(SSplit.GetValue(1).ToString) Then
-            Throw New ArgumentException("That is not a valid serialization of WHSearchClass.")
+        If SSplit.Length <> 5 OrElse Not validateLevelsOrCrafts(SSplit.GetValue(0).ToString) OrElse Not validateLevelsOrCrafts(SSplit.GetValue(1).ToString) Then
+            Throw New ArgumentException("Invalid serialization of WHSearchClass.")
             Return
         End If
 
