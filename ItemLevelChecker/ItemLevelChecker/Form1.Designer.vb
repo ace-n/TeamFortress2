@@ -22,11 +22,7 @@ Partial Class Form1
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
-        Me.Label2 = New System.Windows.Forms.Label()
         Me.btnClick = New System.Windows.Forms.Button()
-        Me.txtLevels = New System.Windows.Forms.TextBox()
-        Me.txtCrafts = New System.Windows.Forms.TextBox()
-        Me.Label1 = New System.Windows.Forms.Label()
         Me.btnRequery = New System.Windows.Forms.Button()
         Me.Label3 = New System.Windows.Forms.Label()
         Me.cbxHideIE = New System.Windows.Forms.CheckBox()
@@ -39,30 +35,20 @@ Partial Class Form1
         Me.gbxItemSets = New System.Windows.Forms.GroupBox()
         Me.Button1 = New System.Windows.Forms.Button()
         Me.Label4 = New System.Windows.Forms.Label()
-        Me.btnNewSearch = New System.Windows.Forms.Button()
         Me.dgvActiveTrades = New System.Windows.Forms.DataGridView()
-        Me.cl_Keyword = New System.Windows.Forms.DataGridViewTextBoxColumn()
-        Me.cl_Levels = New System.Windows.Forms.DataGridViewTextBoxColumn()
-        Me.cl_crafts = New System.Windows.Forms.DataGridViewTextBoxColumn()
-        Me.cl_tf2outpostTradeID = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        Me.clKeyword = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        Me.clCrafts = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        Me.clLevels = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        Me.clOPTrade = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        Me.clReferrer = New System.Windows.Forms.DataGridViewTextBoxColumn()
         Me.GroupBox1.SuspendLayout()
         Me.gbxItemSets.SuspendLayout()
         CType(Me.dgvActiveTrades, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
-        'Label2
-        '
-        Me.Label2.AutoSize = True
-        Me.Label2.Location = New System.Drawing.Point(17, 9)
-        Me.Label2.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
-        Me.Label2.Name = "Label2"
-        Me.Label2.Size = New System.Drawing.Size(326, 17)
-        Me.Label2.TabIndex = 2
-        Me.Label2.Text = "Enter the levels to look for (separated by commas)"
-        '
         'btnClick
         '
-        Me.btnClick.Location = New System.Drawing.Point(20, 138)
+        Me.btnClick.Location = New System.Drawing.Point(642, 497)
         Me.btnClick.Margin = New System.Windows.Forms.Padding(4)
         Me.btnClick.Name = "btnClick"
         Me.btnClick.Size = New System.Drawing.Size(100, 28)
@@ -70,40 +56,9 @@ Partial Class Form1
         Me.btnClick.Text = "Search!"
         Me.btnClick.UseVisualStyleBackColor = True
         '
-        'txtLevels
-        '
-        Me.txtLevels.Location = New System.Drawing.Point(20, 30)
-        Me.txtLevels.Margin = New System.Windows.Forms.Padding(4)
-        Me.txtLevels.Name = "txtLevels"
-        Me.txtLevels.Size = New System.Drawing.Size(491, 22)
-        Me.txtLevels.TabIndex = 4
-        Me.txtLevels.Text = "1,42,69,99,100,0"
-        '
-        'txtCrafts
-        '
-        Me.txtCrafts.Location = New System.Drawing.Point(20, 95)
-        Me.txtCrafts.Margin = New System.Windows.Forms.Padding(4)
-        Me.txtCrafts.MaximumSize = New System.Drawing.Size(491, 22)
-        Me.txtCrafts.Multiline = True
-        Me.txtCrafts.Name = "txtCrafts"
-        Me.txtCrafts.Size = New System.Drawing.Size(491, 22)
-        Me.txtCrafts.TabIndex = 6
-        Me.txtCrafts.Text = "<100,666,777,999,1000,1337,2000,3000,4000,5000,6000,6666,6969,7000,7777,8000,9000" & _
-            ",9999,10000,31337"
-        '
-        'Label1
-        '
-        Me.Label1.AutoSize = True
-        Me.Label1.Location = New System.Drawing.Point(17, 74)
-        Me.Label1.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
-        Me.Label1.Name = "Label1"
-        Me.Label1.Size = New System.Drawing.Size(377, 17)
-        Me.Label1.TabIndex = 5
-        Me.Label1.Text = "Enter the craft numbers to look for (separated by commas)"
-        '
         'btnRequery
         '
-        Me.btnRequery.Location = New System.Drawing.Point(128, 138)
+        Me.btnRequery.Location = New System.Drawing.Point(629, 533)
         Me.btnRequery.Margin = New System.Windows.Forms.Padding(4)
         Me.btnRequery.Name = "btnRequery"
         Me.btnRequery.Size = New System.Drawing.Size(126, 28)
@@ -157,109 +112,98 @@ Partial Class Form1
         Me.GroupBox1.Controls.Add(Me.cbxHideIE)
         Me.GroupBox1.Controls.Add(Me.txtAutoInterval)
         Me.GroupBox1.Controls.Add(Me.Label3)
-        Me.GroupBox1.Location = New System.Drawing.Point(20, 182)
+        Me.GroupBox1.Location = New System.Drawing.Point(12, 445)
         Me.GroupBox1.Name = "GroupBox1"
-        Me.GroupBox1.Size = New System.Drawing.Size(491, 100)
+        Me.GroupBox1.Size = New System.Drawing.Size(544, 101)
         Me.GroupBox1.TabIndex = 12
         Me.GroupBox1.TabStop = False
         Me.GroupBox1.Text = "Options"
         '
         'pbar
         '
-        Me.pbar.Location = New System.Drawing.Point(23, 288)
+        Me.pbar.Location = New System.Drawing.Point(15, 552)
         Me.pbar.Name = "pbar"
-        Me.pbar.Size = New System.Drawing.Size(487, 23)
+        Me.pbar.Size = New System.Drawing.Size(544, 23)
         Me.pbar.TabIndex = 13
         '
         'gbxItemSets
         '
         Me.gbxItemSets.Controls.Add(Me.Button1)
-        Me.gbxItemSets.Location = New System.Drawing.Point(518, 12)
+        Me.gbxItemSets.Location = New System.Drawing.Point(562, 12)
         Me.gbxItemSets.Name = "gbxItemSets"
-        Me.gbxItemSets.Size = New System.Drawing.Size(232, 303)
+        Me.gbxItemSets.Size = New System.Drawing.Size(232, 478)
         Me.gbxItemSets.TabIndex = 14
         Me.gbxItemSets.TabStop = False
         Me.gbxItemSets.Text = "Item Sets"
         '
         'Button1
         '
-        Me.Button1.Location = New System.Drawing.Point(23, 246)
+        Me.Button1.Location = New System.Drawing.Point(55, 283)
         Me.Button1.Name = "Button1"
-        Me.Button1.Size = New System.Drawing.Size(75, 23)
+        Me.Button1.Size = New System.Drawing.Size(125, 23)
         Me.Button1.TabIndex = 0
-        Me.Button1.Text = "Button1"
+        Me.Button1.Text = "DBG UPDATE"
         Me.Button1.UseVisualStyleBackColor = True
         '
         'Label4
         '
         Me.Label4.AutoSize = True
-        Me.Label4.Location = New System.Drawing.Point(22, 332)
+        Me.Label4.Location = New System.Drawing.Point(12, 12)
         Me.Label4.Name = "Label4"
         Me.Label4.Size = New System.Drawing.Size(114, 17)
         Me.Label4.TabIndex = 15
         Me.Label4.Text = "Stored Searches"
         '
-        'btnNewSearch
-        '
-        Me.btnNewSearch.Location = New System.Drawing.Point(323, 550)
-        Me.btnNewSearch.Name = "btnNewSearch"
-        Me.btnNewSearch.Size = New System.Drawing.Size(127, 23)
-        Me.btnNewSearch.TabIndex = 17
-        Me.btnNewSearch.Text = "Add New Search"
-        Me.btnNewSearch.UseVisualStyleBackColor = True
-        '
         'dgvActiveTrades
         '
         Me.dgvActiveTrades.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        Me.dgvActiveTrades.Columns.AddRange(New System.Windows.Forms.DataGridViewColumn() {Me.cl_Keyword, Me.cl_Levels, Me.cl_crafts, Me.cl_tf2outpostTradeID})
-        Me.dgvActiveTrades.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter
-        Me.dgvActiveTrades.Location = New System.Drawing.Point(25, 353)
+        Me.dgvActiveTrades.Columns.AddRange(New System.Windows.Forms.DataGridViewColumn() {Me.clKeyword, Me.clCrafts, Me.clLevels, Me.clOPTrade, Me.clReferrer})
+        Me.dgvActiveTrades.Location = New System.Drawing.Point(15, 33)
         Me.dgvActiveTrades.Name = "dgvActiveTrades"
         Me.dgvActiveTrades.RowTemplate.Height = 24
-        Me.dgvActiveTrades.Size = New System.Drawing.Size(725, 150)
-        Me.dgvActiveTrades.TabIndex = 18
+        Me.dgvActiveTrades.Size = New System.Drawing.Size(541, 406)
+        Me.dgvActiveTrades.TabIndex = 16
         '
-        'cl_Keyword
+        'clKeyword
         '
-        Me.cl_Keyword.HeaderText = "Keyword"
-        Me.cl_Keyword.Name = "cl_Keyword"
-        Me.cl_Keyword.Width = 200
+        Me.clKeyword.HeaderText = "Keyword"
+        Me.clKeyword.Name = "clKeyword"
         '
-        'cl_Levels
+        'clCrafts
         '
-        Me.cl_Levels.HeaderText = "Levels"
-        Me.cl_Levels.Name = "cl_Levels"
+        Me.clCrafts.HeaderText = "Craft #s"
+        Me.clCrafts.Name = "clCrafts"
         '
-        'cl_crafts
+        'clLevels
         '
-        Me.cl_crafts.HeaderText = "Craft #s"
-        Me.cl_crafts.Name = "cl_crafts"
+        Me.clLevels.HeaderText = "Levels"
+        Me.clLevels.Name = "clLevels"
         '
-        'cl_tf2outpostTradeID
+        'clOPTrade
         '
-        Me.cl_tf2outpostTradeID.HeaderText = "Outpost Trade #"
-        Me.cl_tf2outpostTradeID.Name = "cl_tf2outpostTradeID"
+        Me.clOPTrade.HeaderText = "Outpost ID"
+        Me.clOPTrade.Name = "clOPTrade"
+        '
+        'clReferrer
+        '
+        Me.clReferrer.HeaderText = "Referrer"
+        Me.clReferrer.Name = "clReferrer"
         '
         'Form1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(772, 585)
+        Me.ClientSize = New System.Drawing.Size(805, 585)
         Me.Controls.Add(Me.dgvActiveTrades)
-        Me.Controls.Add(Me.btnNewSearch)
+        Me.Controls.Add(Me.btnRequery)
         Me.Controls.Add(Me.Label4)
         Me.Controls.Add(Me.gbxItemSets)
         Me.Controls.Add(Me.pbar)
         Me.Controls.Add(Me.GroupBox1)
-        Me.Controls.Add(Me.btnRequery)
-        Me.Controls.Add(Me.txtCrafts)
-        Me.Controls.Add(Me.Label1)
-        Me.Controls.Add(Me.txtLevels)
         Me.Controls.Add(Me.btnClick)
-        Me.Controls.Add(Me.Label2)
         Me.Margin = New System.Windows.Forms.Padding(4)
         Me.Name = "Form1"
-        Me.Text = "TF2 Scanner - Ace N"
+        Me.Text = "TF2 ITS - Scanner WIP"
         Me.GroupBox1.ResumeLayout(False)
         Me.GroupBox1.PerformLayout()
         Me.gbxItemSets.ResumeLayout(False)
@@ -268,11 +212,7 @@ Partial Class Form1
         Me.PerformLayout()
 
     End Sub
-    Friend WithEvents Label2 As System.Windows.Forms.Label
     Friend WithEvents btnClick As System.Windows.Forms.Button
-    Friend WithEvents txtLevels As System.Windows.Forms.TextBox
-    Friend WithEvents txtCrafts As System.Windows.Forms.TextBox
-    Friend WithEvents Label1 As System.Windows.Forms.Label
     Friend WithEvents btnRequery As System.Windows.Forms.Button
     Friend WithEvents Label3 As System.Windows.Forms.Label
     Friend WithEvents cbxHideIE As System.Windows.Forms.CheckBox
@@ -285,11 +225,11 @@ Partial Class Form1
     Friend WithEvents gbxItemSets As System.Windows.Forms.GroupBox
     Friend WithEvents Label4 As System.Windows.Forms.Label
     Friend WithEvents Button1 As System.Windows.Forms.Button
-    Friend WithEvents btnNewSearch As System.Windows.Forms.Button
     Friend WithEvents dgvActiveTrades As System.Windows.Forms.DataGridView
-    Friend WithEvents cl_Keyword As System.Windows.Forms.DataGridViewTextBoxColumn
-    Friend WithEvents cl_Levels As System.Windows.Forms.DataGridViewTextBoxColumn
-    Friend WithEvents cl_crafts As System.Windows.Forms.DataGridViewTextBoxColumn
-    Friend WithEvents cl_tf2outpostTradeID As System.Windows.Forms.DataGridViewTextBoxColumn
+    Friend WithEvents clKeyword As System.Windows.Forms.DataGridViewTextBoxColumn
+    Friend WithEvents clCrafts As System.Windows.Forms.DataGridViewTextBoxColumn
+    Friend WithEvents clLevels As System.Windows.Forms.DataGridViewTextBoxColumn
+    Friend WithEvents clOPTrade As System.Windows.Forms.DataGridViewTextBoxColumn
+    Friend WithEvents clReferrer As System.Windows.Forms.DataGridViewTextBoxColumn
 
 End Class

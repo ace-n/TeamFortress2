@@ -106,6 +106,7 @@
     <Compile Include="Waiter.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="WHSearchClass.vb" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Dialog1.resx">

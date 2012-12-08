@@ -3,7 +3,7 @@ Imports System.Text.RegularExpressions
 
 Public Class Dialog1
 
-    Public Shared ActiveSearchStruct As Form1.WHSearchStruct
+    Public Shared ActiveSearchStruct As WHSearchClass
 
     Private Sub cancelClick() Handles btnCancel.Click
         Me.DialogResult = System.Windows.Forms.DialogResult.Cancel
@@ -39,14 +39,14 @@ Public Class Dialog1
     End Sub
 
     ' Update the search structure with the data from the textboxes
-    Private Sub UpdateSearchStruct() Handles btnSave.Click
+    Private Sub UpdateSearchStruct()
 
         ' Validate input data
         Dim EndErrorText As String = "text is incorrectly formatted. No update has been performed."
-        If Not validateLevelsOrCrafts(txtLevels.Text) Then
+        If Not WHSearchClass.validateLevelsOrCrafts(txtLevels.Text) Then
             MsgBox("The levels " + EndErrorText)
             Exit Sub
-        ElseIf Not validateLevelsOrCrafts(txtCrafts.Text) Then
+        ElseIf Not WHSearchClass.validateLevelsOrCrafts(txtCrafts.Text) Then
             MsgBox("The crafts " + EndErrorText)
             Exit Sub
         End If
@@ -60,39 +60,6 @@ Public Class Dialog1
         Me.DialogResult = System.Windows.Forms.DialogResult.OK
         Me.Close()
 
-    End Sub
-
-    ' --- Input validators ---
-    Private Function validateLevelsOrCrafts(ByVal Text As String) As Boolean
-
-        Dim SSplit = Text.Split(",")
-        For Each Str As String In SSplit
-
-            If Regex.Match(Str, "(<|>|)\d+").Length <> Str.Length Then
-                Return False ' Error spotted!
-            End If
-
-        Next
-
-        ' No error spotted - return true
-        Return True
-
-    End Function
-
-    Private Sub txtLevels_TextChanged() Handles txtLevels.TextChanged
-        If validateLevelsOrCrafts(txtLevels.Text) Then
-            txtLevels.BackColor = Color.White
-        Else
-            txtLevels.BackColor = Color.Red
-        End If
-    End Sub
-
-    Private Sub txtCrafts_TextChanged() Handles txtCrafts.TextChanged
-        If validateLevelsOrCrafts(txtCrafts.Text) Then
-            txtCrafts.BackColor = Color.White
-        Else
-            txtCrafts.BackColor = Color.Red
-        End If
     End Sub
 
 End Class

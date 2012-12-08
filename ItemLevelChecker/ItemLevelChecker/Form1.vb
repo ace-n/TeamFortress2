@@ -6,17 +6,8 @@ Public Class Form1
 
     Declare Function Sleep Lib "kernel32" (ByVal dwMilliseconds As Integer) As Integer
 
-    ' Search structure
-    Public Structure WHSearchStruct
-
-        Public Levels As String()
-        Public Crafts As String()
-        Public Keyword As String
-
-    End Structure
-
     ' List of active search structures
-    Public ActiveSearchStructsList As New List(Of WHSearchStruct)
+    Public ActiveSearchStructsList As New List(Of WHSearchClass)
 
     ' Auto-check values
     Public LastAutoCheckTime As Integer = My.Computer.Clock.TickCount
@@ -46,13 +37,25 @@ Public Class Form1
     ' Name of file with item links
     Public FileName As String = "TF2 HATS.txt"
 
+    ' Current file location
+    Public MePath As String
+
+    ' List of stored trades
+    Public StoredTradeFPath As String
+
     ' Misc. vars
     Public DoOnlineSearch As Boolean = True
     Private Sub Loader() Handles MyBase.Load
 
+        ' Update executable location (MePath)
+        MePath = Process.GetCurrentProcess.MainModule.FileName
+        MePath = MePath.Remove(MePath.LastIndexOf("\") + 1)
+
+        ' Update stored trade filepath
+        StoredTradeFPath = MePath + "storedtrades.txt"
+
         ' -- Load item data --
-        Dim LPath1 As String = Process.GetCurrentProcess.MainModule.FileName
-        LPath1 = LPath1.Remove(LPath1.LastIndexOf("\") + 1) + FileName
+        Dim LPath1 As String = MePath + FileName
 
         ' Kudos to http://www.dreamincode.net/forums/topic/69080-desktop-directory/
         Dim LPath2 As String = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\" + FileName
@@ -185,29 +188,14 @@ Public Class Form1
 
         ' Prevent the user and the system from making concurrent search requests
         If Not SearchIsBusy Then
-            Search()
+            SearchAgain()
         End If
 
     End Sub
 
-    ' Searches
-    Private Sub Search()
+    ' Cache update
+    Private Sub UpdateCache()
 
-        ' -- Input verification - Levels --
-        Dim S As String = txtLevels.Text
-        S = Regex.Replace(S, "(>|<|)\d", "").Replace(",", "")
-        If S.Length > 0 Then
-            MsgBox("The level list is invalid. When searching for different levels, separate them with a comma.")
-            Exit Sub
-        End If
-
-        ' -- Input verification - Crafts --
-        S = txtCrafts.Text
-        S = Regex.Replace(S, "(>|<|)\d", "").Replace(",", "")
-        If S.Length > 0 Then
-            MsgBox("The craft number list is invalid. When searching for different craft numbers, separate them with a comma.")
-            Exit Sub
-        End If
         ' -- End input verification --
 
         pbar.Maximum = ILwhIds.Count - 1
@@ -312,13 +300,34 @@ Public Class Form1
 
         End If
 
+        ' Reset pBar
+        pbar.Value = 0
+
         ' Search the cache
-        SearchCache(txtLevels.Text.Replace(";", " ").Replace(",", " ").Split(" "), _
-                    txtCrafts.Text.Replace(";", " ").Replace(",", " ").Split(" "))
+        'SearchCache(txtLevels.Text.Replace(";", " ").Replace(",", " ").Split(" "), _
+        '            txtCrafts.Text.Replace(";", " ").Replace(",", " ").Split(" "))
 
     End Sub
 
-    Public Sub SearchCache(ByVal DesiredLevels As String(), ByVal DesiredCrafts As String(), Optional ByVal Keyword As String = "")
+    ' Perform active searches
+    Private Sub SearchAgain()
+
+        ' List of results
+        Dim ResultsList As New List(Of String)
+
+        ' Perform searches
+        For i As Integer = 0 To ActiveSearchStructsList.Count - 1
+            Dim SearchObj As WHSearchClass = ActiveSearchStructsList.Item(i)
+            SearchCache(SearchObj.Levels, SearchObj.Crafts, SearchObj.Keyword)
+        Next
+
+        ' Report results
+
+
+    End Sub
+
+    ' Search cache given parameters
+    Public Function SearchCache(ByVal DesiredLevels As String(), ByVal DesiredCrafts As String(), Optional ByVal Keyword As String = "") As List(Of String)
 
         ' -- Find matching items --
         Dim OutputList As New List(Of String)
@@ -434,14 +443,11 @@ Public Class Form1
 
         End If
 
-        ' Reset pBar
-        pbar.Value = 0
-
         ' Reset auto-check/search is-busy flags
         CheckIsAuto = False
         SearchIsBusy = False
 
-    End Sub
+    End Function
 
     ' Function that evaluates conditions and determines if they are true/false
     '   NOTE: This DOES NOT validate incoming conditions!
@@ -465,42 +471,6 @@ Public Class Form1
         End If
 
     End Function
-
-    ' Scans the item's page for level/craft # data (OLD)
-    Private Sub Stage4()
-
-        ' --- Levels ---
-
-        ' Isolate level data
-        Dim HTMLLevels As String = IEObj.Document.Body.InnerHTML
-        HTMLLevels = HTMLLevels.Substring(Math.Max(0, HTMLLevels.IndexOf("Specific variants")))
-
-        ' Get levels that are being searched for
-        Dim LevelNums As String() = (txtLevels.Text & ",").Split(",")
-
-        ' Search for the levels
-        Dim LevelsFound As New List(Of String)
-        For Each LNum As String In LevelNums
-            If HTMLLevels.Contains("Level " & LNum & " ") And Not String.IsNullOrWhiteSpace(LNum) Then
-                LevelsFound.Add(LNum)
-            End If
-        Next
-
-        ' Report results
-        If LevelsFound.Count = 0 Then
-            MsgBox("No specific variants with those levels were found for the item.")
-        Else
-            Dim LStr As String = ""
-            For Each L As String In LevelsFound
-                LStr &= L & ", "
-            Next
-
-            MsgBox("Items with the following levels were found: " & LStr.Substring(0, LStr.Length - 2))
-        End If
-
-        ' --- Craft #s ---
-
-    End Sub
 
     Private Sub btnRequery_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btnRequery.Click
         DoOnlineSearch = True
@@ -539,7 +509,7 @@ Public Class Form1
                 DoOnlineSearch = True
                 If Not SearchIsBusy Then ' Prevent the user and the system from making concurrent search requests
                     SearchIsBusy = True
-                    Search() ' Strangely enough, the backgroundWorker appears to do this in its own thread - not in the main one
+                    SearchAgain() ' Strangely enough, the backgroundWorker appears to do this in its own thread - not in the main one
                 End If
             End If
 
@@ -564,52 +534,61 @@ Public Class Form1
     End Sub
 
     Private Sub searchWorker_DoWork() Handles btnClick.Click
-        Search()
-    End Sub
 
-    Private Sub txtCrafts_TextChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles txtCrafts.TextChanged
-
-        ' Combine lines
-        Dim Lines As String() = txtCrafts.Lines
-        If Lines.Count > 1 Then
-            Dim TotalString As String = ""
-            If txtCrafts.Text.Contains(",") Then
-                For Each S As String In Lines
-                    TotalString &= S
-                Next
-            Else
-                For Each S As String In Lines
-                    TotalString &= S & ","
-                Next
-                TotalString = TotalString.Remove(TotalString.Length - 2) ' Remove last comma
-            End If
-
-            ' Update text
-            txtCrafts.Text = TotalString
-
+        ' Query WH, if necessary
+        If DoOnlineSearch Then
+            UpdateCache()
         End If
 
+        ' Search
+        SearchAgain()
 
     End Sub
 
-    Private Sub btnNewSearch_Click() Handles btnNewSearch.Click
+    'Private Sub txtCrafts_TextChanged(ByVal sender As System.Object, ByVal e As System.EventArgs)
 
-        ' Show new search creation dialog
-        Dialog1.ActiveSearchStruct = New WHSearchStruct ' Create new search
-        Dim DlgResult As DialogResult = Dialog1.ShowDialog() ' Show dialog
+    '' Combine lines
+    'Dim Lines As String() = txtCrafts.Lines
+    'If Lines.Count > 1 Then
+    '    Dim TotalString As String = ""
+    '    If txtCrafts.Text.Contains(",") Then
+    '        For Each S As String In Lines
+    '            TotalString &= S
+    '        Next
+    '    Else
+    '        For Each S As String In Lines
+    '            TotalString &= S & ","
+    '        Next
+    '        TotalString = TotalString.Remove(TotalString.Length - 2) ' Remove last comma
+    '    End If
 
-        ' Add search to list of active searches, if appropriate
-        If DlgResult = DialogResult.OK Then
-            ActiveSearchStructsList.Add(Dialog1.ActiveSearchStruct)
-        End If
+    '    ' Update text
+    '    txtCrafts.Text = TotalString
 
-        ' Update the list of items
-        updateListOfActiveSearches()
+    'End If
 
-    End Sub
 
-    ' Update list
-    Private Sub updateListOfActiveSearches()
+    'End Sub
+
+    'Private Sub btnNewSearch_Click() Handles btnNewSearch.Click
+
+    '    ' Show new search creation dialog
+    '    Dialog1.ActiveSearchStruct = New WHSearchClass ' Create new search
+    '    Dim DlgResult As DialogResult = Dialog1.ShowDialog() ' Show dialog
+
+    '    ' Add search to list of active searches, if appropriate
+    '    If DlgResult = DialogResult.OK Then
+    '        ActiveSearchStructsList.Add(Dialog1.ActiveSearchStruct)
+    '    End If
+
+    '    ' Update the list of items
+    '    updateListOfActiveSearches()
+
+    'End Sub
+
+    ' Update DataGridView (with changes from the list of active searches)
+
+    Private Sub updateDataGridView()
 
         ' Add new rows, if necessary
         If ActiveSearchStructsList.Count > dgvActiveTrades.RowCount Then
@@ -623,13 +602,125 @@ Public Class Form1
             Dim ActiveRow As DataGridViewRow = dgvActiveTrades.Rows.Item(0)
 
             ' Get active WHSearchStruct
-            Dim ActiveWHSS As WHSearchStruct = ActiveSearchStructsList.Item(i)
+            Dim ActiveWHSS As WHSearchClass = ActiveSearchStructsList.Item(i)
 
             ' Add stuff to the active row
             ActiveRow.Cells(0).Value = ActiveWHSS.Keyword
             ActiveRow.Cells(1).Value = String.Join(",", ActiveWHSS.Levels)
+            ActiveRow.Cells(2).Value = String.Join(",", ActiveWHSS.Crafts)
 
         Next
+
+    End Sub
+
+    ' Update list of active searches (with changes from the data grid view)
+    Private Sub updateListOfActiveSearches() Handles dgvActiveTrades.RowLeave
+
+        ' Clear ActiveSearchStructsList
+        ActiveSearchStructsList.Clear()
+
+        For i As Integer = 0 To dgvActiveTrades.RowCount - 2 ' Skip the last row, because it will always be empty
+
+            ' Update active searches list
+            Dim ActiveSearchObj As New WHSearchClass
+            Dim ActiveRow As DataGridViewRow = dgvActiveTrades.Rows.Item(i)
+
+            ' Check if current row is valid - skip it if it isn't
+            If Not WHSearchClass.validateLevelsOrCrafts(ActiveRow.Cells(1).EditedFormattedValue.ToString) Or Not WHSearchClass.validateLevelsOrCrafts(ActiveRow.Cells(2).EditedFormattedValue.ToString) Then
+
+                ' Error detected
+                MsgBox("Error in levels/crafts specification in row " + (i + 1).ToString + ". That row's data was not updated.")
+                dgvActiveTrades.Rows.Item(i).DefaultCellStyle.BackColor = Color.OrangeRed
+                Continue For
+
+            Else
+
+                ' Uncolor the row
+                dgvActiveTrades.Rows.Item(i).DefaultCellStyle.BackColor = Color.White
+
+            End If
+
+            ' Update search object
+            ActiveSearchObj.Keyword = ActiveRow.Cells(0).EditedFormattedValue
+            ActiveSearchObj.Levels = ActiveRow.Cells(1).EditedFormattedValue.ToString.Split(",")
+            ActiveSearchObj.Crafts = ActiveRow.Cells(2).EditedFormattedValue.ToString.Split(",")
+
+            ' Add search object to active search list
+            ActiveSearchStructsList.Add(ActiveSearchObj)
+
+        Next
+
+    End Sub
+
+    ' Serialize trades and output them to a file
+    Private Sub SaveTradesOnClose() Handles Me.FormClosing
+
+        Dim sWriter As New StreamWriter(StoredTradeFPath)
+
+        ' Serialize trades
+        For i = 0 To ActiveSearchStructsList.Count - 1
+            sWriter.WriteLine(ActiveSearchStructsList.Item(i).Serialize())
+        Next
+
+        ' Write to file
+        sWriter.Flush()
+
+    End Sub
+
+    ' Load serialized trades from file
+    '   This is called by the main starting procedure
+    Private Sub LoadTradesOnOpen()
+
+        ' Check to make sure that trade file exists
+        If Not File.Exists(StoredTradeFPath) Then
+            MsgBox("No stored trades were loaded because none could be found.")
+            Exit Sub
+        End If
+
+        ' Load trades from file
+        Dim sReader As New StreamReader(StoredTradeFPath)
+        While sReader.Peek <> -1
+
+            Dim sLine As String = sReader.ReadLine
+
+            ' Error message
+            Dim ErrorMsg As String = "An invalid trade (" + sLine + ") was found in the stored trades file. Click OK to skip it, or CANCEL to stop loading trades."
+
+            ' Some really simple validation - stronger validation is done in the trade object constructor
+            If sLine.Length < 2 OrElse sLine.Contains(";;") Then
+                If MsgBox(ErrorMsg) = MsgBoxResult.Cancel Then
+
+                    ' Clear the loaded items and stop loading any more
+                    ActiveSearchStructsList.Clear()
+                    sReader.Close()
+                    Exit Sub
+
+                Else
+                    Continue While ' Skip the item
+                End If
+
+            End If
+
+            ' Enter new trade into database
+            Try
+                ActiveSearchStructsList.Add(New WHSearchClass(sLine))
+            Catch e As ArgumentException
+
+                If MsgBox(ErrorMsg) = MsgBoxResult.Cancel Then
+
+                    ' Clear the loaded items and stop loading any more
+                    ActiveSearchStructsList.Clear()
+                    sReader.Close()
+                    Exit Sub
+
+                End If
+
+            End Try
+
+        End While
+
+        ' Close the StreamReader
+        sReader.Close()
 
     End Sub
 
