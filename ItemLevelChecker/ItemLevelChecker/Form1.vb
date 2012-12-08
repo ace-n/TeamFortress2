@@ -329,7 +329,7 @@ Public Class Form1
             MsgBox("Copy matching item list to clipboard? (" & ResultsList.Count & " item(s) found)", MsgBoxStyle.OkCancel) = MsgBoxResult.Ok Then
 
             ' Output result to clipboard
-            My.Computer.Clipboard.SetText(String.Join(vbLf, ResultsList))
+            My.Computer.Clipboard.SetText(String.Join(vbCrLf, ResultsList))
 
         ElseIf Not CheckIsAuto Then
 
@@ -438,7 +438,6 @@ Public Class Form1
         LastSearchTimestamp = My.Computer.Clock.LocalTime
 
         ' Reset auto-check/search is-busy flags
-        CheckIsAuto = False
         SearchIsBusy = False
 
         ' Return results of search
@@ -509,6 +508,7 @@ Public Class Form1
                     SearchAgain() ' Strangely enough, the backgroundWorker appears to do this in its own thread - not in the main one
                 End If
             End If
+            CheckIsAuto = False
 
         End While
 
