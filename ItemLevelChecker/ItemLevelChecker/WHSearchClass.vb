@@ -66,4 +66,11 @@
 
     End Function
 
+    ' Null checker
+    Public Function IsNull() As Boolean
+
+        Return Levels.Count = 0 AndAlso Crafts.Count = 0 AndAlso String.IsNullOrWhiteSpace(Keyword & OutpostID & Referrer) ' Concatenation saves space
+
+    End Function
+
 End Class

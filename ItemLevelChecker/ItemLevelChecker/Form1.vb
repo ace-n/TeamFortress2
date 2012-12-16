@@ -6,6 +6,12 @@ Public Class Form1
 
     Declare Function Sleep Lib "kernel32" (ByVal dwMilliseconds As Integer) As Integer
 
+    ' Base URLs
+    Public OPBaseURL As String = "http://www.tf2outpost.com" ' TF2 Outpost
+
+    ' List of results
+    Public ResultsList As New List(Of List(Of String))
+
     ' List of active search structures
     Public ActiveSearchStructsList As New List(Of WHSearchClass)
 
@@ -316,25 +322,66 @@ Public Class Form1
     Private Sub SearchAgain()
 
         ' List of results
-        Dim ResultsList As New List(Of String)
+        ResultsList.Clear()
+
+        ' Number of items found so far
+        Dim MatchCnt As Integer = 0
 
         ' Perform searches
         For i As Integer = 0 To ActiveSearchStructsList.Count - 1
             Dim SearchObj As WHSearchClass = ActiveSearchStructsList.Item(i)
-            ResultsList.AddRange(SearchCache(SearchObj.Levels, SearchObj.Crafts, SearchObj.Keyword))
+            ResultsList.Add(SearchCache(SearchObj.Levels, SearchObj.Crafts, SearchObj.Keyword))
+            MatchCnt += ResultsList.Last.Count ' Add match count of last search to the total match count
         Next
 
-        ' Report results
-        If ResultsList.Count > 0 AndAlso
-            MsgBox("Copy matching item list to clipboard? (" & ResultsList.Count & " item(s) found)", MsgBoxStyle.OkCancel) = MsgBoxResult.Ok Then
+        ' Highlight the data grid
+        HighlightDataGrid()
 
-            ' Output result to clipboard
-            My.Computer.Clipboard.SetText(String.Join(vbCrLf, ResultsList))
+        ' Report results
+        If MatchCnt > 0 AndAlso
+            MsgBox(MatchCnt & " matching items have been found!") Then
 
         ElseIf Not CheckIsAuto Then
 
             ' Notify user that nothing was found if the search was user-initiated
             MsgBox("No matching items were found.")
+
+        End If
+
+    End Sub
+
+    Public Sub HighlightDataGrid()
+
+        ' Highlight the successful searches
+        If cbxHighlightSuccesses.Checked AndAlso dgvActiveTrades.Rows.Count - 1 = ActiveSearchStructsList.Count Then
+
+            ' Clear highlighting
+            dgvActiveTrades.BackgroundColor = Color.White
+
+            For i = 0 To dgvActiveTrades.RowCount - 2 ' This is deliberately risky code - if this produces an error, it should be obvious (to the developer - remember this is private software!)
+
+                ' Get active row
+                Dim ActiveRow As DataGridViewRow = dgvActiveTrades.Rows(i)
+
+                ' Highlight a match if its count is > 0
+                If ResultsList.Count > i AndAlso ResultsList.Item(i).Count <> 0 Then ' Yay for short circuiting
+                    ActiveRow.DefaultCellStyle.BackColor = Color.LimeGreen
+                    Continue For
+                End If
+
+                ' Highlight invalid rows
+                If Not WHSearchClass.validateLevelsOrCrafts(ActiveRow.Cells(1).EditedFormattedValue.ToString) Or Not WHSearchClass.validateLevelsOrCrafts(ActiveRow.Cells(2).EditedFormattedValue.ToString) Then
+
+                    ' Error detected
+                    ActiveRow.DefaultCellStyle.BackColor = Color.OrangeRed
+                    Continue For
+
+                End If
+
+                ' Recolor the row (if nothing else has colored it)
+                ActiveRow.DefaultCellStyle.BackColor = Color.White
+
+            Next
 
         End If
 
@@ -584,8 +631,14 @@ Public Class Form1
     'End Sub
 
     ' Update DataGridView (with changes from the list of active searches)
-
     Private Sub updateDataGridView()
+
+        ' Remove any null searches from the activeSearchStructs
+        For i = ActiveSearchStructsList.Count - 1 To 0 Step -1
+            If ActiveSearchStructsList.Item(i).IsNull() Then
+                ActiveSearchStructsList.RemoveAt(i) ' This remove operation is OK (even within a list-dependent loop) because the for loop starts at the end of the array
+            End If
+        Next
 
         ' Add new rows, if necessary
         '   NOTE: There should be (number of items + 1) rows since some functions disregard the last row (on purpose - whenever the user edits a data grid, the last row is always empty)
@@ -611,6 +664,9 @@ Public Class Form1
 
         Next
 
+        ' Delete any unused rows in the dataGridView
+        RemoveUnusedDGVRows()
+
     End Sub
 
     ' Update list of active searches (with changes from the data grid view)
@@ -618,6 +674,9 @@ Public Class Form1
 
         ' Clear ActiveSearchStructsList
         ActiveSearchStructsList.Clear()
+
+        ' Remove empty rows
+        RemoveUnusedDGVRows()
 
         For i As Integer = 0 To dgvActiveTrades.RowCount - 2 ' Skip the last row, because it will always be empty
 
@@ -628,15 +687,9 @@ Public Class Form1
             ' Check if current row is valid - skip it if it isn't
             If Not WHSearchClass.validateLevelsOrCrafts(ActiveRow.Cells(1).EditedFormattedValue.ToString) Or Not WHSearchClass.validateLevelsOrCrafts(ActiveRow.Cells(2).EditedFormattedValue.ToString) Then
 
-                ' Error detected
-                'MsgBox("Error in levels/crafts specification in row " + (i + 1).ToString + ". That row's data was not updated.")
-                dgvActiveTrades.Rows.Item(i).DefaultCellStyle.BackColor = Color.OrangeRed
+                ' Error detected - add null search object to list (to keep list in sync with other things like the dataGridView)
+                ActiveSearchStructsList.Add(New WHSearchClass)
                 Continue For
-
-            Else
-
-                ' Uncolor the row
-                dgvActiveTrades.Rows.Item(i).DefaultCellStyle.BackColor = Color.White
 
             End If
 
@@ -659,9 +712,11 @@ Public Class Form1
 
         Dim sWriter As New StreamWriter(StoredTradeFPath)
 
-        ' Serialize trades
+        ' Serialize non-null trades
         For i = 0 To ActiveSearchStructsList.Count - 1
-            sWriter.WriteLine(ActiveSearchStructsList.Item(i).Serialize())
+            If Not ActiveSearchStructsList.Item(i).IsNull Then
+                sWriter.WriteLine(ActiveSearchStructsList.Item(i).Serialize())
+            End If
         Next
 
         ' Write to file
@@ -689,7 +744,7 @@ Public Class Form1
             Dim ErrorMsg As String = "An invalid trade (" + sLine + ") was found in the stored trades file. Click OK to skip it, or CANCEL to stop loading trades."
 
             ' Some really simple validation - stronger validation is done in the trade object constructor
-            If sLine.Length > 8 AndAlso Not sLine.Contains(";") Then ' 4 separators * 2 characters per separator = 8 characters minimum (assuming line has no meaning)
+            If sLine.Length > 4 AndAlso Not sLine.Contains(";") Then ' 4 separators * 2 characters per separator = 8 characters minimum (assuming line has no meaning)
                 If MsgBox(ErrorMsg, MsgBoxStyle.OkCancel) = MsgBoxResult.Cancel Then
 
                     ' An error was detected
@@ -701,7 +756,7 @@ Public Class Form1
                 Else
                     Continue While ' Skip the item
                 End If
-            ElseIf sLine.Length < 9 Then ' Skip lines with 8 characters or less (including lines consisting entirely of separators)
+            ElseIf sLine.Length < 5 Then ' Skip lines with 4 characters or less (including lines consisting entirely of separators)
                 Continue While
             End If
 
@@ -730,5 +785,131 @@ Public Class Form1
         updateDataGridView()
 
     End Sub
+
+    ' Context menu for the active trades
+    Private Sub dgvContextMenuActivate(ByVal sender As System.Object, ByVal e As System.Windows.Forms.DataGridViewCellMouseEventArgs) Handles dgvActiveTrades.CellMouseClick
+
+        ' Skip if button isn't correct
+        If e.Button <> MouseButtons.Right Then
+            Return
+        End If
+
+        ' Highlight current row
+        dgvActiveTrades.ClearSelection()
+        dgvActiveTrades.Rows(e.RowIndex).Selected = True
+
+        ' Display context menu
+        cmsItemsView.Visible = True
+
+    End Sub
+
+    ' Delete any unused rows within the dataGridView
+    Private Sub RemoveUnusedDGVRows()
+
+        ' This method doesn't work - there is no nice way to remove empty rows (at least when the removal is triggered by event handlers)
+        Exit Sub
+
+        For i = dgvActiveTrades.RowCount - 2 To 0 Step -1
+
+            ' Get active row
+            Dim curRow As DataGridViewRow = dgvActiveTrades.Rows(i)
+
+            ' Check to see if any cells are filled
+            Dim RowIsEmpty As Boolean = True
+            For j = 0 To curRow.Cells.Count - 1
+                If Not String.IsNullOrWhiteSpace(curRow.Cells(j).EditedFormattedValue.ToString) Then
+                    RowIsEmpty = False
+                    Exit For
+                End If
+            Next
+
+            ' Delete any empty rows
+            If RowIsEmpty Then
+                'dgvActiveTrades.Rows(i).Visible = False
+            End If
+
+        Next
+
+    End Sub
+
+    ' Hide the context menu if it (and not one of its buttons) is left clicked
+    Private Sub hideCMS() Handles cmsItemsView.MouseClick
+        cmsItemsView.Visible = False
+    End Sub
+
+#Region "Context menu for dataGridView"
+
+    ' Go to outpost trade(s) of selected row(s)
+    Private Sub goToOPTrade() Handles GoToTF2OPTradeToolStripMenuItem.Click
+
+        Dim HasOpenedOPHomepage As Boolean = False
+
+        ' Make sure at least one row is selected
+        If dgvActiveTrades.SelectedRows.Count = 0 Then
+            Exit Sub
+        End If
+
+        ' Loop through selected trades
+        For Each Row As DataGridViewRow In dgvActiveTrades.SelectedRows
+
+            ' Get current trade ID
+            Dim CurTradeID As String = Row.Cells(3).EditedFormattedValue.ToString
+
+            ' Handle null trade IDs
+            '   If trade ID is null
+            '       If the TF2OP homepage has been launched, don't launch another one
+            '       Otherwise, launch a copy of the homepage
+            If CurTradeID.Length = 0 OrElse String.IsNullOrWhiteSpace(CurTradeID) Then ' This SHOULD check for white spaces (not just 0 length strings)
+                If HasOpenedOPHomepage Then
+                    Continue For
+                Else
+                    HasOpenedOPHomepage = True
+                    Process.Start(OPBaseURL)
+                End If
+            End If
+
+            ' Validate trade IDs (check that they are #s)
+            If Integer.TryParse(CurTradeID, New Integer) Then
+
+                ' NOTE: If OPBaseURL ends in a / (such that "...tf2outpost.com//trade..." results), the browser will adjust for this automatically (so don't worry about it)
+                Process.Start(OPBaseURL + "/trade/" + CurTradeID)
+
+            End If
+
+        Next
+
+    End Sub
+
+    ' Copy search results for selected row(s)
+    Private Sub CopySearchResultsToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles CopySearchResultsToolStripMenuItem.Click
+
+        ' Make sure at least one row is selected
+        If dgvActiveTrades.SelectedRows.Count = 0 Then
+            Exit Sub
+        End If
+
+        ' Loop through selected trades
+        Dim ResultsStr As String = ""
+        For i = 0 To dgvActiveTrades.Rows.Count - 1
+
+            ' Get current row
+            Dim curRow As DataGridViewRow = dgvActiveTrades.Rows(i)
+
+            ' Skip the row if it isn't selected, or if it wasn't a successful search
+            If Not curRow.Selected OrElse curRow.DefaultCellStyle.BackColor <> Color.LimeGreen Then
+                Continue For
+            End If
+
+            ' Copy results from selected rows to the results string
+            ResultsStr &= String.Join(vbCrLf, ResultsList.Item(i))
+
+        Next
+
+        ' Output results to clipboard
+        My.Computer.Clipboard.SetText(ResultsStr)
+
+    End Sub
+
+#End Region
 
 End Class

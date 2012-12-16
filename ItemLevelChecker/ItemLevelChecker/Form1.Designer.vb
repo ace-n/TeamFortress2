@@ -22,6 +22,7 @@ Partial Class Form1
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
+        Me.components = New System.ComponentModel.Container()
         Me.btnClick = New System.Windows.Forms.Button()
         Me.btnRequery = New System.Windows.Forms.Button()
         Me.Label3 = New System.Windows.Forms.Label()
@@ -35,18 +36,24 @@ Partial Class Form1
         Me.gbxItemSets = New System.Windows.Forms.GroupBox()
         Me.Label4 = New System.Windows.Forms.Label()
         Me.dgvActiveTrades = New System.Windows.Forms.DataGridView()
-        Me.GroupBox2 = New System.Windows.Forms.GroupBox()
-        Me.CheckBox1 = New System.Windows.Forms.CheckBox()
-        Me.CheckBox2 = New System.Windows.Forms.CheckBox()
-        Me.CheckBox3 = New System.Windows.Forms.CheckBox()
-        Me.CheckBox4 = New System.Windows.Forms.CheckBox()
         Me.clKeyword = New System.Windows.Forms.DataGridViewTextBoxColumn()
         Me.clLevels = New System.Windows.Forms.DataGridViewTextBoxColumn()
         Me.clCrafts = New System.Windows.Forms.DataGridViewTextBoxColumn()
         Me.clOPTrade = New System.Windows.Forms.DataGridViewTextBoxColumn()
         Me.clReferrer = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        Me.cmsItemsView = New System.Windows.Forms.ContextMenuStrip(Me.components)
+        Me.GoToTF2OPTradeToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.GoToUserSteamPageToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.CopySearchResultsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.OpenTF2WHPagesOfResultsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.GroupBox2 = New System.Windows.Forms.GroupBox()
+        Me.CheckBox4 = New System.Windows.Forms.CheckBox()
+        Me.CheckBox3 = New System.Windows.Forms.CheckBox()
+        Me.CheckBox2 = New System.Windows.Forms.CheckBox()
+        Me.cbxHighlightSuccesses = New System.Windows.Forms.CheckBox()
         Me.GroupBox1.SuspendLayout()
         CType(Me.dgvActiveTrades, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.cmsItemsView.SuspendLayout()
         Me.GroupBox2.SuspendLayout()
         Me.SuspendLayout()
         '
@@ -153,65 +160,14 @@ Partial Class Form1
         Me.dgvActiveTrades.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText
         Me.dgvActiveTrades.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
         Me.dgvActiveTrades.Columns.AddRange(New System.Windows.Forms.DataGridViewColumn() {Me.clKeyword, Me.clLevels, Me.clCrafts, Me.clOPTrade, Me.clReferrer})
+        Me.dgvActiveTrades.ContextMenuStrip = Me.cmsItemsView
         Me.dgvActiveTrades.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter
         Me.dgvActiveTrades.Location = New System.Drawing.Point(15, 33)
         Me.dgvActiveTrades.Name = "dgvActiveTrades"
         Me.dgvActiveTrades.RowTemplate.Height = 24
+        Me.dgvActiveTrades.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect
         Me.dgvActiveTrades.Size = New System.Drawing.Size(743, 406)
         Me.dgvActiveTrades.TabIndex = 16
-        '
-        'GroupBox2
-        '
-        Me.GroupBox2.Controls.Add(Me.CheckBox4)
-        Me.GroupBox2.Controls.Add(Me.CheckBox3)
-        Me.GroupBox2.Controls.Add(Me.CheckBox2)
-        Me.GroupBox2.Controls.Add(Me.CheckBox1)
-        Me.GroupBox2.Location = New System.Drawing.Point(764, 256)
-        Me.GroupBox2.Name = "GroupBox2"
-        Me.GroupBox2.Size = New System.Drawing.Size(235, 233)
-        Me.GroupBox2.TabIndex = 17
-        Me.GroupBox2.TabStop = False
-        Me.GroupBox2.Text = "Options (These are WIP)"
-        '
-        'CheckBox1
-        '
-        Me.CheckBox1.AutoSize = True
-        Me.CheckBox1.Location = New System.Drawing.Point(7, 22)
-        Me.CheckBox1.Name = "CheckBox1"
-        Me.CheckBox1.Size = New System.Drawing.Size(217, 21)
-        Me.CheckBox1.TabIndex = 0
-        Me.CheckBox1.Text = "Highlight successful searches"
-        Me.CheckBox1.UseVisualStyleBackColor = True
-        '
-        'CheckBox2
-        '
-        Me.CheckBox2.AutoSize = True
-        Me.CheckBox2.Location = New System.Drawing.Point(7, 50)
-        Me.CheckBox2.Name = "CheckBox2"
-        Me.CheckBox2.Size = New System.Drawing.Size(160, 21)
-        Me.CheckBox2.TabIndex = 1
-        Me.CheckBox2.Text = "Ignore keyword case"
-        Me.CheckBox2.UseVisualStyleBackColor = True
-        '
-        'CheckBox3
-        '
-        Me.CheckBox3.AutoSize = True
-        Me.CheckBox3.Location = New System.Drawing.Point(7, 78)
-        Me.CheckBox3.Name = "CheckBox3"
-        Me.CheckBox3.Size = New System.Drawing.Size(151, 21)
-        Me.CheckBox3.TabIndex = 2
-        Me.CheckBox3.Text = "Save/Load settings"
-        Me.CheckBox3.UseVisualStyleBackColor = True
-        '
-        'CheckBox4
-        '
-        Me.CheckBox4.AutoSize = True
-        Me.CheckBox4.Location = New System.Drawing.Point(7, 105)
-        Me.CheckBox4.Name = "CheckBox4"
-        Me.CheckBox4.Size = New System.Drawing.Size(191, 21)
-        Me.CheckBox4.TabIndex = 3
-        Me.CheckBox4.Text = "Save/Load past searches"
-        Me.CheckBox4.UseVisualStyleBackColor = True
         '
         'clKeyword
         '
@@ -243,6 +199,91 @@ Partial Class Form1
         Me.clReferrer.Name = "clReferrer"
         Me.clReferrer.Width = 150
         '
+        'cmsItemsView
+        '
+        Me.cmsItemsView.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.GoToTF2OPTradeToolStripMenuItem, Me.GoToUserSteamPageToolStripMenuItem, Me.CopySearchResultsToolStripMenuItem, Me.OpenTF2WHPagesOfResultsToolStripMenuItem})
+        Me.cmsItemsView.Name = "cmsItemsView"
+        Me.cmsItemsView.Size = New System.Drawing.Size(284, 122)
+        '
+        'GoToTF2OPTradeToolStripMenuItem
+        '
+        Me.GoToTF2OPTradeToolStripMenuItem.Name = "GoToTF2OPTradeToolStripMenuItem"
+        Me.GoToTF2OPTradeToolStripMenuItem.Size = New System.Drawing.Size(283, 24)
+        Me.GoToTF2OPTradeToolStripMenuItem.Text = "Go to TF2OP trade"
+        '
+        'GoToUserSteamPageToolStripMenuItem
+        '
+        Me.GoToUserSteamPageToolStripMenuItem.Name = "GoToUserSteamPageToolStripMenuItem"
+        Me.GoToUserSteamPageToolStripMenuItem.Size = New System.Drawing.Size(283, 24)
+        Me.GoToUserSteamPageToolStripMenuItem.Text = "Go to user steam page (TODO)"
+        '
+        'CopySearchResultsToolStripMenuItem
+        '
+        Me.CopySearchResultsToolStripMenuItem.Name = "CopySearchResultsToolStripMenuItem"
+        Me.CopySearchResultsToolStripMenuItem.Size = New System.Drawing.Size(283, 24)
+        Me.CopySearchResultsToolStripMenuItem.Text = "Copy search results"
+        '
+        'OpenTF2WHPagesOfResultsToolStripMenuItem
+        '
+        Me.OpenTF2WHPagesOfResultsToolStripMenuItem.Name = "OpenTF2WHPagesOfResultsToolStripMenuItem"
+        Me.OpenTF2WHPagesOfResultsToolStripMenuItem.Size = New System.Drawing.Size(283, 24)
+        Me.OpenTF2WHPagesOfResultsToolStripMenuItem.Text = "Open results' TF2WH pages"
+        '
+        'GroupBox2
+        '
+        Me.GroupBox2.Controls.Add(Me.CheckBox4)
+        Me.GroupBox2.Controls.Add(Me.CheckBox3)
+        Me.GroupBox2.Controls.Add(Me.CheckBox2)
+        Me.GroupBox2.Controls.Add(Me.cbxHighlightSuccesses)
+        Me.GroupBox2.Location = New System.Drawing.Point(764, 256)
+        Me.GroupBox2.Name = "GroupBox2"
+        Me.GroupBox2.Size = New System.Drawing.Size(235, 233)
+        Me.GroupBox2.TabIndex = 17
+        Me.GroupBox2.TabStop = False
+        Me.GroupBox2.Text = "Options (These are WIP)"
+        '
+        'CheckBox4
+        '
+        Me.CheckBox4.AutoSize = True
+        Me.CheckBox4.Location = New System.Drawing.Point(7, 105)
+        Me.CheckBox4.Name = "CheckBox4"
+        Me.CheckBox4.Size = New System.Drawing.Size(191, 21)
+        Me.CheckBox4.TabIndex = 3
+        Me.CheckBox4.Text = "Save/Load past searches"
+        Me.CheckBox4.UseVisualStyleBackColor = True
+        '
+        'CheckBox3
+        '
+        Me.CheckBox3.AutoSize = True
+        Me.CheckBox3.Location = New System.Drawing.Point(7, 78)
+        Me.CheckBox3.Name = "CheckBox3"
+        Me.CheckBox3.Size = New System.Drawing.Size(151, 21)
+        Me.CheckBox3.TabIndex = 2
+        Me.CheckBox3.Text = "Save/Load settings"
+        Me.CheckBox3.UseVisualStyleBackColor = True
+        '
+        'CheckBox2
+        '
+        Me.CheckBox2.AutoSize = True
+        Me.CheckBox2.Location = New System.Drawing.Point(7, 50)
+        Me.CheckBox2.Name = "CheckBox2"
+        Me.CheckBox2.Size = New System.Drawing.Size(160, 21)
+        Me.CheckBox2.TabIndex = 1
+        Me.CheckBox2.Text = "Ignore keyword case"
+        Me.CheckBox2.UseVisualStyleBackColor = True
+        '
+        'cbxHighlightSuccesses
+        '
+        Me.cbxHighlightSuccesses.AutoSize = True
+        Me.cbxHighlightSuccesses.Checked = True
+        Me.cbxHighlightSuccesses.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.cbxHighlightSuccesses.Location = New System.Drawing.Point(7, 22)
+        Me.cbxHighlightSuccesses.Name = "cbxHighlightSuccesses"
+        Me.cbxHighlightSuccesses.Size = New System.Drawing.Size(217, 21)
+        Me.cbxHighlightSuccesses.TabIndex = 0
+        Me.cbxHighlightSuccesses.Text = "Highlight successful searches"
+        Me.cbxHighlightSuccesses.UseVisualStyleBackColor = True
+        '
         'Form1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
@@ -262,6 +303,7 @@ Partial Class Form1
         Me.GroupBox1.ResumeLayout(False)
         Me.GroupBox1.PerformLayout()
         CType(Me.dgvActiveTrades, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.cmsItemsView.ResumeLayout(False)
         Me.GroupBox2.ResumeLayout(False)
         Me.GroupBox2.PerformLayout()
         Me.ResumeLayout(False)
@@ -285,11 +327,16 @@ Partial Class Form1
     Friend WithEvents CheckBox4 As System.Windows.Forms.CheckBox
     Friend WithEvents CheckBox3 As System.Windows.Forms.CheckBox
     Friend WithEvents CheckBox2 As System.Windows.Forms.CheckBox
-    Friend WithEvents CheckBox1 As System.Windows.Forms.CheckBox
+    Friend WithEvents cbxHighlightSuccesses As System.Windows.Forms.CheckBox
     Friend WithEvents clKeyword As System.Windows.Forms.DataGridViewTextBoxColumn
     Friend WithEvents clLevels As System.Windows.Forms.DataGridViewTextBoxColumn
     Friend WithEvents clCrafts As System.Windows.Forms.DataGridViewTextBoxColumn
     Friend WithEvents clOPTrade As System.Windows.Forms.DataGridViewTextBoxColumn
     Friend WithEvents clReferrer As System.Windows.Forms.DataGridViewTextBoxColumn
+    Friend WithEvents cmsItemsView As System.Windows.Forms.ContextMenuStrip
+    Friend WithEvents GoToTF2OPTradeToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents GoToUserSteamPageToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents CopySearchResultsToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents OpenTF2WHPagesOfResultsToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
 
 End Class
