@@ -494,7 +494,7 @@ Public Class Form1
 
     ' Function that evaluates conditions and determines if they are true/false
     '   NOTE: This DOES NOT validate incoming conditions!
-    Private Function EvalCondition(ByVal Condition As String, ByVal Number As Integer) As Boolean
+    Public Function EvalCondition(ByVal Condition As String, ByVal Number As Integer) As Boolean
 
         If Char.IsNumber(Condition.First) Then
 
@@ -881,7 +881,7 @@ Public Class Form1
     End Sub
 
     ' Copy search results for selected row(s)
-    Private Sub CopySearchResultsToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles CopySearchResultsToolStripMenuItem.Click
+    Private Sub copySearchResults() Handles CopySearchResultsToolStripMenuItem.Click
 
         ' Make sure at least one row is selected
         If dgvActiveTrades.SelectedRows.Count = 0 Then
@@ -910,6 +910,47 @@ Public Class Form1
 
     End Sub
 
+    ' Compare search results to buyer's backpack
+    '   YES! YES! IT'S FINALLY HERE! MUAHAHAHA!
+    Private Sub CheckBackpack() Handles CompareResultsToABackpackToolStripMenuItem.Click
+
+        ' Get index of selected row
+        Dim RowIndex As Integer = dgvActiveTrades.SelectedRows.Item(0).Index
+
+        ' Get active search object
+        '   This contains the level/quality conditions
+        Dim SearchObj As WHSearchClass
+        If RowIndex < ActiveSearchStructsList.Count Then
+            SearchObj = ActiveSearchStructsList.Item(RowIndex)
+        Else
+            Exit Sub ' No matching search structure
+        End If
+
+        ' Get a list of the defIndexes in the TF2WH results for this search
+        Dim DefIdxList As New List(Of Integer)
+        If RowIndex < ResultsList.Count Then
+
+            ' Get defIndexes
+            For Each UniqueItemID As String In ResultsList.Item(RowIndex)
+                DefIdxList.Add(UniqueItemID.Remove(UniqueItemID.IndexOf(";")).Remove(0, 5))
+            Next
+
+        Else
+            Exit Sub ' No matching resultsList entry
+        End If
+
+        ' Query the DownloadBackpack function
+        Dim ItemExistsList As List(Of Boolean) = SteamAPI.DownloadBackpack(DefIdxList, "", SearchObj.Levels, SearchObj.Crafts)
+
+    End Sub
+
 #End Region
 
+    Private Sub SteamAPI_UpdateSchema() Handles Button1.Click
+        SteamAPI.DownloadSchema()
+    End Sub
+
+    Private Sub CheckBackpack(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles CompareResultsToABackpackToolStripMenuItem.Click
+
+    End Sub
 End Class

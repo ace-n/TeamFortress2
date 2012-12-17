@@ -39,6 +39,7 @@ Partial Class Form1
         Me.clKeyword = New System.Windows.Forms.DataGridViewTextBoxColumn()
         Me.clLevels = New System.Windows.Forms.DataGridViewTextBoxColumn()
         Me.clCrafts = New System.Windows.Forms.DataGridViewTextBoxColumn()
+        Me.clBuyerID64 = New System.Windows.Forms.DataGridViewTextBoxColumn()
         Me.clOPTrade = New System.Windows.Forms.DataGridViewTextBoxColumn()
         Me.clReferrer = New System.Windows.Forms.DataGridViewTextBoxColumn()
         Me.cmsItemsView = New System.Windows.Forms.ContextMenuStrip(Me.components)
@@ -46,11 +47,13 @@ Partial Class Form1
         Me.GoToUserSteamPageToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.CopySearchResultsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.OpenTF2WHPagesOfResultsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.CompareResultsToABackpackToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.GroupBox2 = New System.Windows.Forms.GroupBox()
         Me.CheckBox4 = New System.Windows.Forms.CheckBox()
         Me.CheckBox3 = New System.Windows.Forms.CheckBox()
         Me.CheckBox2 = New System.Windows.Forms.CheckBox()
         Me.cbxHighlightSuccesses = New System.Windows.Forms.CheckBox()
+        Me.Button1 = New System.Windows.Forms.Button()
         Me.GroupBox1.SuspendLayout()
         CType(Me.dgvActiveTrades, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.cmsItemsView.SuspendLayout()
@@ -59,7 +62,7 @@ Partial Class Form1
         '
         'btnClick
         '
-        Me.btnClick.Location = New System.Drawing.Point(831, 496)
+        Me.btnClick.Location = New System.Drawing.Point(995, 404)
         Me.btnClick.Margin = New System.Windows.Forms.Padding(4)
         Me.btnClick.Name = "btnClick"
         Me.btnClick.Size = New System.Drawing.Size(100, 28)
@@ -69,7 +72,7 @@ Partial Class Form1
         '
         'btnRequery
         '
-        Me.btnRequery.Location = New System.Drawing.Point(818, 532)
+        Me.btnRequery.Location = New System.Drawing.Point(982, 440)
         Me.btnRequery.Margin = New System.Windows.Forms.Padding(4)
         Me.btnRequery.Name = "btnRequery"
         Me.btnRequery.Size = New System.Drawing.Size(126, 28)
@@ -125,7 +128,7 @@ Partial Class Form1
         Me.GroupBox1.Controls.Add(Me.Label3)
         Me.GroupBox1.Location = New System.Drawing.Point(12, 445)
         Me.GroupBox1.Name = "GroupBox1"
-        Me.GroupBox1.Size = New System.Drawing.Size(746, 101)
+        Me.GroupBox1.Size = New System.Drawing.Size(892, 101)
         Me.GroupBox1.TabIndex = 12
         Me.GroupBox1.TabStop = False
         Me.GroupBox1.Text = "Options"
@@ -134,12 +137,12 @@ Partial Class Form1
         '
         Me.pbar.Location = New System.Drawing.Point(15, 552)
         Me.pbar.Name = "pbar"
-        Me.pbar.Size = New System.Drawing.Size(743, 23)
+        Me.pbar.Size = New System.Drawing.Size(889, 23)
         Me.pbar.TabIndex = 13
         '
         'gbxItemSets
         '
-        Me.gbxItemSets.Location = New System.Drawing.Point(764, 12)
+        Me.gbxItemSets.Location = New System.Drawing.Point(928, 12)
         Me.gbxItemSets.Name = "gbxItemSets"
         Me.gbxItemSets.Size = New System.Drawing.Size(232, 237)
         Me.gbxItemSets.TabIndex = 14
@@ -159,51 +162,63 @@ Partial Class Form1
         '
         Me.dgvActiveTrades.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText
         Me.dgvActiveTrades.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        Me.dgvActiveTrades.Columns.AddRange(New System.Windows.Forms.DataGridViewColumn() {Me.clKeyword, Me.clLevels, Me.clCrafts, Me.clOPTrade, Me.clReferrer})
+        Me.dgvActiveTrades.Columns.AddRange(New System.Windows.Forms.DataGridViewColumn() {Me.clKeyword, Me.clLevels, Me.clCrafts, Me.clBuyerID64, Me.clOPTrade, Me.clReferrer})
         Me.dgvActiveTrades.ContextMenuStrip = Me.cmsItemsView
         Me.dgvActiveTrades.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter
         Me.dgvActiveTrades.Location = New System.Drawing.Point(15, 33)
         Me.dgvActiveTrades.Name = "dgvActiveTrades"
         Me.dgvActiveTrades.RowTemplate.Height = 24
         Me.dgvActiveTrades.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect
-        Me.dgvActiveTrades.Size = New System.Drawing.Size(743, 406)
+        Me.dgvActiveTrades.Size = New System.Drawing.Size(889, 406)
         Me.dgvActiveTrades.TabIndex = 16
         '
         'clKeyword
         '
         Me.clKeyword.HeaderText = "Keyword"
+        Me.clKeyword.MinimumWidth = 50
         Me.clKeyword.Name = "clKeyword"
         Me.clKeyword.Width = 150
         '
         'clLevels
         '
         Me.clLevels.HeaderText = "Levels"
+        Me.clLevels.MinimumWidth = 50
         Me.clLevels.Name = "clLevels"
         Me.clLevels.Width = 150
         '
         'clCrafts
         '
         Me.clCrafts.HeaderText = "Craft #s"
+        Me.clCrafts.MinimumWidth = 50
         Me.clCrafts.Name = "clCrafts"
         Me.clCrafts.Width = 150
+        '
+        'clBuyerID64
+        '
+        Me.clBuyerID64.HeaderText = "Buyer ID64"
+        Me.clBuyerID64.MinimumWidth = 100
+        Me.clBuyerID64.Name = "clBuyerID64"
+        Me.clBuyerID64.Width = 150
         '
         'clOPTrade
         '
         Me.clOPTrade.HeaderText = "Outpost ID"
+        Me.clOPTrade.MinimumWidth = 50
         Me.clOPTrade.Name = "clOPTrade"
         Me.clOPTrade.ToolTipText = "Double Click to go to trade"
         '
         'clReferrer
         '
         Me.clReferrer.HeaderText = "Referrer"
+        Me.clReferrer.MinimumWidth = 50
         Me.clReferrer.Name = "clReferrer"
         Me.clReferrer.Width = 150
         '
         'cmsItemsView
         '
-        Me.cmsItemsView.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.GoToTF2OPTradeToolStripMenuItem, Me.GoToUserSteamPageToolStripMenuItem, Me.CopySearchResultsToolStripMenuItem, Me.OpenTF2WHPagesOfResultsToolStripMenuItem})
+        Me.cmsItemsView.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.GoToTF2OPTradeToolStripMenuItem, Me.GoToUserSteamPageToolStripMenuItem, Me.CopySearchResultsToolStripMenuItem, Me.OpenTF2WHPagesOfResultsToolStripMenuItem, Me.CompareResultsToABackpackToolStripMenuItem})
         Me.cmsItemsView.Name = "cmsItemsView"
-        Me.cmsItemsView.Size = New System.Drawing.Size(284, 122)
+        Me.cmsItemsView.Size = New System.Drawing.Size(284, 146)
         '
         'GoToTF2OPTradeToolStripMenuItem
         '
@@ -229,15 +244,21 @@ Partial Class Form1
         Me.OpenTF2WHPagesOfResultsToolStripMenuItem.Size = New System.Drawing.Size(283, 24)
         Me.OpenTF2WHPagesOfResultsToolStripMenuItem.Text = "Open results' TF2WH pages"
         '
+        'CompareResultsToABackpackToolStripMenuItem
+        '
+        Me.CompareResultsToABackpackToolStripMenuItem.Name = "CompareResultsToABackpackToolStripMenuItem"
+        Me.CompareResultsToABackpackToolStripMenuItem.Size = New System.Drawing.Size(283, 24)
+        Me.CompareResultsToABackpackToolStripMenuItem.Text = "Compare to backpack (WIP)"
+        '
         'GroupBox2
         '
         Me.GroupBox2.Controls.Add(Me.CheckBox4)
         Me.GroupBox2.Controls.Add(Me.CheckBox3)
         Me.GroupBox2.Controls.Add(Me.CheckBox2)
         Me.GroupBox2.Controls.Add(Me.cbxHighlightSuccesses)
-        Me.GroupBox2.Location = New System.Drawing.Point(764, 256)
+        Me.GroupBox2.Location = New System.Drawing.Point(928, 256)
         Me.GroupBox2.Name = "GroupBox2"
-        Me.GroupBox2.Size = New System.Drawing.Size(235, 233)
+        Me.GroupBox2.Size = New System.Drawing.Size(235, 141)
         Me.GroupBox2.TabIndex = 17
         Me.GroupBox2.TabStop = False
         Me.GroupBox2.Text = "Options (These are WIP)"
@@ -284,22 +305,33 @@ Partial Class Form1
         Me.cbxHighlightSuccesses.Text = "Highlight successful searches"
         Me.cbxHighlightSuccesses.UseVisualStyleBackColor = True
         '
+        'Button1
+        '
+        Me.Button1.Location = New System.Drawing.Point(969, 476)
+        Me.Button1.Margin = New System.Windows.Forms.Padding(4)
+        Me.Button1.Name = "Button1"
+        Me.Button1.Size = New System.Drawing.Size(147, 28)
+        Me.Button1.TabIndex = 18
+        Me.Button1.Text = "Update item schema"
+        Me.Button1.UseVisualStyleBackColor = True
+        '
         'Form1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(1011, 585)
-        Me.Controls.Add(Me.GroupBox2)
+        Me.ClientSize = New System.Drawing.Size(1172, 585)
+        Me.Controls.Add(Me.Button1)
         Me.Controls.Add(Me.dgvActiveTrades)
-        Me.Controls.Add(Me.btnRequery)
+        Me.Controls.Add(Me.GroupBox2)
         Me.Controls.Add(Me.Label4)
-        Me.Controls.Add(Me.gbxItemSets)
+        Me.Controls.Add(Me.btnRequery)
         Me.Controls.Add(Me.pbar)
         Me.Controls.Add(Me.GroupBox1)
+        Me.Controls.Add(Me.gbxItemSets)
         Me.Controls.Add(Me.btnClick)
         Me.Margin = New System.Windows.Forms.Padding(4)
         Me.Name = "Form1"
-        Me.Text = "TF2 ITS - Scanner WIP (Upgrade Stage 2/3)"
+        Me.Text = "TF2 ITS - Scanner WIP (Upgrade Stage 2.5/3)"
         Me.GroupBox1.ResumeLayout(False)
         Me.GroupBox1.PerformLayout()
         CType(Me.dgvActiveTrades, System.ComponentModel.ISupportInitialize).EndInit()
@@ -328,15 +360,18 @@ Partial Class Form1
     Friend WithEvents CheckBox3 As System.Windows.Forms.CheckBox
     Friend WithEvents CheckBox2 As System.Windows.Forms.CheckBox
     Friend WithEvents cbxHighlightSuccesses As System.Windows.Forms.CheckBox
-    Friend WithEvents clKeyword As System.Windows.Forms.DataGridViewTextBoxColumn
-    Friend WithEvents clLevels As System.Windows.Forms.DataGridViewTextBoxColumn
-    Friend WithEvents clCrafts As System.Windows.Forms.DataGridViewTextBoxColumn
-    Friend WithEvents clOPTrade As System.Windows.Forms.DataGridViewTextBoxColumn
-    Friend WithEvents clReferrer As System.Windows.Forms.DataGridViewTextBoxColumn
     Friend WithEvents cmsItemsView As System.Windows.Forms.ContextMenuStrip
     Friend WithEvents GoToTF2OPTradeToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents GoToUserSteamPageToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents CopySearchResultsToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents OpenTF2WHPagesOfResultsToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents CompareResultsToABackpackToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents clKeyword As System.Windows.Forms.DataGridViewTextBoxColumn
+    Friend WithEvents clLevels As System.Windows.Forms.DataGridViewTextBoxColumn
+    Friend WithEvents clCrafts As System.Windows.Forms.DataGridViewTextBoxColumn
+    Friend WithEvents clBuyerID64 As System.Windows.Forms.DataGridViewTextBoxColumn
+    Friend WithEvents clOPTrade As System.Windows.Forms.DataGridViewTextBoxColumn
+    Friend WithEvents clReferrer As System.Windows.Forms.DataGridViewTextBoxColumn
+    Friend WithEvents Button1 As System.Windows.Forms.Button
 
 End Class

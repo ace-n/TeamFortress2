@@ -1,0 +1,21 @@
+﻿Valve's item "quality" values
+	normal (0 - Normal)
+		Set on stock items.
+	rarity1 (1 - Genuine)
+		Set on items acquired for a promotional event (for example, Sun-On-A-Stick and Sharpened Volcano Fragment).
+	vintage (3 - Vintage)
+		Set on items that were owned before certain updates and promotions.
+	rarity4 (5 - Unusual)
+		Set on items with an effect attached or that were gained from a Halloween event.
+	unique (6 - Unique)
+		Set on the most common items including those found via drops and crafting.
+	community (7 - Community)
+		Set on items granted to community contributors.
+	developer (8 - Valve)
+		Set on items owned by Valve staff members.
+	selfmade (9 - Self-Made)
+		Set on items owned by 3rd-party content creators.
+	strange (11 - Strange)
+		Set on ranked items.
+	haunted (13 - Haunted)
+		Set on Halloween items.
