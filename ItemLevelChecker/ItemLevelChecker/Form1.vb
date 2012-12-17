@@ -914,8 +914,16 @@ Public Class Form1
     '   YES! YES! IT'S FINALLY HERE! MUAHAHAHA!
     Private Sub CheckBackpack() Handles CompareResultsToABackpackToolStripMenuItem.Click
 
+        ' Make sure at least one row is selected
+        If dgvActiveTrades.SelectedRows.Count = 0 Then
+            Exit Sub
+        End If
+
+        ' Get selected (active) row
+        Dim ActiveRow As DataGridViewRow = dgvActiveTrades.SelectedRows.Item(0)
+
         ' Get index of selected row
-        Dim RowIndex As Integer = dgvActiveTrades.SelectedRows.Item(0).Index
+        Dim RowIndex As Integer = ActiveRow.Index
 
         ' Get active search object
         '   This contains the level/quality conditions
@@ -939,8 +947,45 @@ Public Class Form1
             Exit Sub ' No matching resultsList entry
         End If
 
+        ' Get player ID64
+        Dim PlayerID64 As String = ActiveRow.Cells(3).EditedFormattedValue
+        If PlayerID64.Length < 2 OrElse Regex.Match(PlayerID64, "\d+").Length <> PlayerID64.Length Then
+            Exit Sub ' Skip invalid ID64s (a valid ID64 is required by the Steam API to determine whose backpack to fetch)
+        End If
+
         ' Query the DownloadBackpack function
-        Dim ItemExistsList As List(Of Boolean) = SteamAPI.DownloadBackpack(DefIdxList, "", SearchObj.Levels, SearchObj.Crafts)
+        Dim ItemExistsList As List(Of Boolean) = SteamAPI.DownloadBackpack(PlayerID64, DefIdxList, "", SearchObj.Levels, SearchObj.Crafts)
+
+        ' Print the search results for the items the user doesn't have
+        Dim OutputStr As String = ""
+        If ItemExistsList.Contains(False) Then
+
+            ' The user queried is missing at least 1 of the search results
+            OutputStr = "This user DOES NOT have the following items from the search results list:"
+
+            For i = 0 To ItemExistsList.Count - 1
+                If Not ItemExistsList.Item(i) Then
+                    OutputStr &= vbCrLf & ResultsList.Item(RowIndex).Item(i)
+                End If
+            Next
+
+        ElseIf ItemExistsList.Count <> 0 Then
+
+            ' The user queried has all of the search results
+            OutputStr = "This user DOES have all the items in the search results list."
+
+        Else
+
+            ' An error occurred
+            MsgBox("SteamAPI.DownloadBackpack(): An error has occurred. (PlayerID64=" + PlayerID64 + ")")
+
+
+        End If
+
+        ' Copy output to clipboard
+        If ItemExistsList.Count <> 0 Then
+            My.Computer.Clipboard.SetText(OutputStr)
+        End If
 
     End Sub
 

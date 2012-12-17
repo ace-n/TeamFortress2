@@ -79,20 +79,26 @@ Public Class SteamAPI
     ' Gets the backpack of a player and extracts the item indexes ("defindexes") from it
     '   NOTE: We don't need the item schema anymore - just the defindexes! (TF2WH URLs start with the relevant item's defindex - so we can just check which of those defindexes is/is not present in the backpack)
     '   NOTE 2: If quality doesn't matter, it should be set to -1
-    Public Shared Function DownloadBackpack(ByVal WHDefIndexList As List(Of Integer), ByVal quality As String, ByVal levels As String(), ByVal Crafts As String()) As List(Of Boolean)
-
-        ' Currently works with my backpack
+    Public Shared Function DownloadBackpack(ByVal PlayerID64 As String, ByVal WHDefIndexList As List(Of Integer), ByVal quality As String, ByVal levels As String(), ByVal Crafts As String()) As List(Of Boolean)
 
         ' Quotation mark
         Dim Q As String = Chr(34)
 
         ' Download player's backpack from Valve
-        Dim backpackJson As String = wc1.DownloadString("http://api.steampowered.com/ITFItems_440/GetPlayerItems/v0001/?key=EF64585D95B0B771ABEE56A94E3816F8&format=json&SteamID=76561198002208943") _
+        Dim backpackJson As String = wc1.DownloadString("http://api.steampowered.com/ITFItems_440/GetPlayerItems/v0001/?key=EF64585D95B0B771ABEE56A94E3816F8&format=json&SteamID=" + PlayerID64) _
                                      .Replace(vbCr, "")
 
         ' Remove attribute data from backpackJson
         '   If not removed, this data can cause problems
         backpackJson = Regex.Replace(backpackJson, Q + "attribute" + Q + ":\s\[(.|\n)+?\]", "", RegexOptions.Multiline)
+
+        ' Check to make sure the query is valid
+        If Not backpackJson.Contains(Q + "status" + Q + ": 1") Then
+
+            ' Something went wrong
+            Return New List(Of Boolean) ' Return null
+
+        End If
 
         ' Misc. stuff
         quality = quality.ToLowerInvariant ' All the qualities are in lowercase anyways - this prevents "Vintage" or "Unusual" from screwing up the system
@@ -147,7 +153,7 @@ Public Class SteamAPI
 
                     ' DBG NOTIFIER
                     If Crafts.Length <> 0 Then
-                        MsgBox("SteamAPI.DownloadBackpack() does not currently search for items based on craft number.")
+                        'MsgBox("SteamAPI.DownloadBackpack() does not currently search for items based on craft number.")
                     End If
 
                     ' Equality check 2 (level)
